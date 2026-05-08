@@ -112,6 +112,9 @@ else
     echo -e "${GREEN}✓ Shell sudah menjadi default${RESET}"
 fi
 
+echo ""
+echo ""
+
 echo -e "${GREEN}${BOLD}                   INSTALASI SELESAI!                              ${RESET}"
 echo ""
 
