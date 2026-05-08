@@ -133,7 +133,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 <p align="center">
-  <img src="screenshoot/startup.png" alt="Tahap Startup" width="600">
+  <img src="screenshoot/setup.png" alt="Tahap Startup" width="600">
 </p>
 
 > **Input:** Ketik `Y` untuk melanjutkan
