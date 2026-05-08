@@ -7,7 +7,7 @@
 ![Python](https://img.shields.io/badge/Python-3.x-yellow)
 
 <p align="center">
-  <img src="https://via.placeholder.com/800x400/0a0e27/00ffff?text=ZyroXterm+Theme+Preview" alt="ZyroXterm Theme Preview" width="800">
+  <img src="screenshoot/hasil.png" alt="ZyroXterm Theme Preview" width="800">
 </p>
 
 ## 📌 Tentang ZyroXterm
@@ -65,7 +65,7 @@ C_GREEN   = "#82"   # Hijau
 ### Prasyarat
 
 <p align="center">
-  <img src="https://via.placeholder.com/400x100/1a1a2e/ffd700?text=Requirements:+Python+3,+ZSH" alt="Requirements" width="400">
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCgB2R10-mlTl-NRQzpSwztZo9efN9sXX1dQvuu2Y4VA&s=10" alt="Requirements" width="400">
 </p>
 
 ```bash
@@ -121,7 +121,7 @@ chmod +x install.sh
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 <p align="center">
-  <img src="screenshot/install.png" alt="Tahap Install" width="600">
+  <img src="screenshoot/install.png" alt="Tahap Install" width="600">
 </p>
 
 > **Input:** Ketik `Y` untuk melanjutkan instalasi
@@ -133,7 +133,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 <p align="center">
-  <img src="screenshot/startup.png" alt="Tahap Startup" width="600">
+  <img src="screenshoot/startup.png" alt="Tahap Startup" width="600">
 </p>
 
 > **Input:** Ketik `Y` untuk melanjutkan
@@ -145,7 +145,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 ### Tema Telah Terpasang!
 
 <p align="center">
-  <img src="screenshot/hasil.png" alt="Hasil Instalasi" width="600">
+  <img src="screenshoot/hasil.png" alt="Hasil Instalasi" width="600">
 </p>
 
 ## 🚀 Cara Penggunaan
