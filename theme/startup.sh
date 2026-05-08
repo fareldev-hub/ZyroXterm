@@ -67,7 +67,6 @@ else
 fi
 
 # Setup autostart
-echo -e "\n${GREEN}[4/5] SETUP...${RESET}"
 echo -e "${GRAY}➜ Menambahkan ke .zshrc${RESET}"
 
 # Backup .zshrc jika ada
