@@ -62,7 +62,7 @@ install_package "python3"
 install_package "zsh"
 install_package "cmatrix"
 install_package "sl"
-install_package "pyfiglet" "pip"
+install_package "pyfiglet" "pip" "setuptools" "cython"
 
 # ==========================================
 # PROSES ZYROXTERM (SILENT)
