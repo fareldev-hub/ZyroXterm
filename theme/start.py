@@ -601,7 +601,7 @@ def main():
                 print(f"{C_PURPLE}│{RST} {center_text(thanks).strip()} {C_PURPLE}│{RST}")
                 print(f"{C_PURPLE}╰{'━' * (tw() - 2)}╯{RST}")
                 print()
-                os.system("kill 0; exit")
+                sys.exit(0)
                 break
             
             elif cmd.lower() == "help":
