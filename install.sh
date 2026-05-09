@@ -43,7 +43,7 @@ echo -e "${RESET}"
 echo -e "${YELLOW}Penginstalan Selesai √${RESET}"
 echo ""
 echo ""
-read -p "$(echo -e ${BOLD}${CYAN}"➜ Lanjut ke instalasi Ubuntu? (y/n): "${RESET})" pilihan
+read -p "$(echo -e ${BOLD}${CYAN}"➜ Lanjut ke instalasi Linux? (y/n): "${RESET})" pilihan
 
 if [[ ! "$pilihan" =~ ^[Yy]$ ]]; then
     
