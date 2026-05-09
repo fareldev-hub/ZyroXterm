@@ -28,7 +28,7 @@ install_package() {
     
     if [ "$installer" == "pip" ]; then
         if ! pip show $package &> /dev/null; then
-            pip install $package -q 2>/dev/null
+            pip install $package -q 
         fi
     else
         if ! command -v $package &> /dev/null; then
@@ -50,7 +50,7 @@ check_and_install_python_packages() {
     if [ ${#missing[@]} -gt 0 ]; then
         echo -e "${INFO} Menginstall Python packages: ${missing[*]}"
         for pkg in "${missing[@]}"; do
-            pip install $pkg -q 2>/dev/null
+            pip install $pkg -q 
         done
         echo -e "${CHECK} Python packages terinstall"
     fi
@@ -90,6 +90,7 @@ if [[ ! "$pilihan" =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
+# Install packages
 install_package "figlet"
 install_package "python3"
 install_package "zsh"
@@ -101,32 +102,47 @@ install_package "cython" "pip"
 
 cd $HOME
 
-if [ ! -d "$HOME/ZyroXterm" ] || [ ! -f "$HOME/ZyroXterm/theme/start.py" ]; then
-    echo -e "\n${RED}${CROSS} Folder atau file ZyroXterm tidak ditemukan${RESET}"
+ZYROX_SOURCE=""
+if [ -d "$HOME/ZyroXterm" ]; then
+    ZYROX_SOURCE="$HOME/ZyroXterm"
+elif [ -d "$HOME/.ZyroXterm" ]; then
+    ZYROX_SOURCE="$HOME/.ZyroXterm"
+else
+    echo -e "\n${RED}${CROSS} Folder ZyroXterm tidak ditemukan!${RESET}"
+    echo -e "${YELLOW}Pastikan folder ZyroXterm ada di:${RESET}"
+    echo -e "  - $HOME/ZyroXterm"
+    echo -e "  - $HOME/.ZyroXterm"
     exit 1
 fi
 
-if [ -f "$HOME/ZyroXterm/theme/main.py" ]; then
-    sed -i 's/^    elif cmd.lower() == "restart":$/    elif cmd.lower() == "restart":\n        pass/' "$HOME/ZyroXterm/theme/main.py" 2>/dev/null
-    sed -i 's/^    elif cmd.lower() == "exit":$/    elif cmd.lower() == "exit":\n        break/' "$HOME/ZyroXterm/theme/main.py" 2>/dev/null
+if [ -f "$ZYROX_SOURCE/theme/start.py" ]; then
+    cp "$ZYROX_SOURCE/theme/start.py" "$ZYROX_SOURCE/theme/start.py.bak"
+    sed -i 's/^    elif cmd.lower() == "restart":$/    elif cmd.lower() == "restart":\n        pass/' "$ZYROX_SOURCE/theme/start.py" 2>/dev/null
+    sed -i 's/^    elif cmd.lower() == "exit":$/    elif cmd.lower() == "exit":\n        break/' "$ZYROX_SOURCE/theme/start.py" 2>/dev/null
 fi
 
-[ -d "$HOME/ZyroXterm" ] && [ ! -d "$HOME/.ZyroXterm" ] && mv ZyroXterm .ZyroXterm
+if [ -d "$HOME/ZyroXterm" ] && [ ! -d "$HOME/.ZyroXterm" ]; then
+    echo -e "${INFO} Memindahkan ZyroXterm ke .ZyroXterm${RESET}"
+    mv "$HOME/ZyroXterm" "$HOME/.ZyroXterm"
+elif [ -d "$HOME/ZyroXterm" ] && [ -d "$HOME/.ZyroXterm" ]; then
+    echo -e "${YELLOW}${INFO} Folder .ZyroXterm sudah ada, menggabungkan...${RESET}"
+    cp -rn "$HOME/ZyroXterm/"* "$HOME/.ZyroXterm/" 2>/dev/null
+    rm -rf "$HOME/ZyroXterm"
+fi
 
+BACKUP_DIR="$HOME/.zshrc_backups"
+mkdir -p "$BACKUP_DIR"
 if [ -f "$HOME/.zshrc" ]; then
-    zip -q $HOME/default_zshrc.zip $HOME/.zshrc 2>/dev/null
+    cp "$HOME/.zshrc" "$BACKUP_DIR/.zshrc.$(date +%Y%m%d_%H%M%S)"
+    
+    # Hapus hanya blok ZyroXterm lama
+    sed -i '/# ==========================================/d' "$HOME/.zshrc"
+    sed -i '/# ZYROXTERM THEME/d' "$HOME/.zshrc"
+    sed -i '/if \[ -f "\$HOME\/.ZyroXterm\/theme\/start.py" \]; then/d' "$HOME/.zshrc"
+    sed -i '/    python "\$HOME\/.ZyroXterm\/theme\/start.py"/d' "$HOME/.zshrc"
+    sed -i '/    echo ""/d' "$HOME/.zshrc"
+    sed -i '/fi/d' "$HOME/.zshrc"
 fi
-
-if [ -f "$HOME/.zshrc" ]; then
-    sed -i '/# ==========================================/d' $HOME/.zshrc
-    sed -i '/# ZYROXTERM THEME/d' $HOME/.zshrc
-    sed -i '/if \[ -f "\$HOME\/.ZyroXterm\/theme\/start.py" \]; then/d' $HOME/.zshrc
-    sed -i '/    python "\$HOME\/.ZyroXterm\/theme\/start.py"/d' $HOME/.zshrc
-    sed -i '/    echo ""/d' $HOME/.zshrc
-    sed -i '/fi/d' $HOME/.zshrc
-fi
-
-[[ $SHELL != *"zsh"* ]] && chsh -s zsh 2>/dev/null
 
 echo ""
 echo -e "${CYAN}┌────────────────────────────────────────┐${RESET}"
@@ -166,21 +182,29 @@ if [ -n "$SELECTED_DISTRO" ]; then
     pkg install proot-distro -y
     
     if check_linux_status $SELECTED_DISTRO; then
-        echo -e "${YELLOW}${INFO} $SELECTED_DISTRO sudah terinstall, menghapus yang lama...${RESET}"
-        proot-distro remove $SELECTED_DISTRO
-        rm -rf $PREFIX/var/lib/proot-distro/installed-rootfs/$SELECTED_DISTRO 2>/dev/null
+        echo -e "${YELLOW}${INFO} $SELECTED_DISTRO sudah terinstall.${RESET}"
+        echo -e "${INFO} Update packages...${RESET}"
+        
+        proot-distro login $SELECTED_DISTRO -- bash -c "
+            apt update -y
+            apt install -y zsh python3 python3-pip
+        "
+        
+        INSTALL_SUCCESS=true
+    else
+        echo -e "${INFO} Menginstall $SELECTED_DISTRO (proses download & install)...${RESET}"
+        echo -e "${GRAY}${INFO} Ini mungkin memakan waktu 5-10 menit tergantung kecepatan internet${RESET}"
+        echo ""
+        
+        proot-distro install $SELECTED_DISTRO
+        
+        if [ $? -eq 0 ]; then
+            INSTALL_SUCCESS=true
+        fi
     fi
     
-    echo -e "${INFO} Menginstall $SELECTED_DISTRO (proses download & install)...${RESET}"
-    echo -e "${GRAY}${INFO} Ini mungkin memakan waktu 5-10 menit tergantung kecepatan internet${RESET}"
-    echo ""
-    
-    proot-distro install $SELECTED_DISTRO
-    
-    if [ $? -eq 0 ]; then
-        echo ""
-        echo -e "${CHECK} $SELECTED_DISTRO berhasil diinstall!${RESET}"
-        INSTALL_SUCCESS=true
+    if [ "$INSTALL_SUCCESS" = true ]; then
+        echo -e "${CHECK} $SELECTED_DISTRO siap digunakan!${RESET}"
         
         echo ""
         echo -e "${CYAN}╔════════════════════════════════════════════╗${RESET}"
@@ -196,38 +220,59 @@ if [ -n "$SELECTED_DISTRO" ]; then
         
         echo -e "${INFO} Menginstall Python packages...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            pip install setuptools --break-system-packages
-            pip install cython --break-system-packages
-            pip install pyfiglet --break-system-packages
-        " 
+            pip3 install pyfiglet  --break-system-packages
+        "
         
         echo -e "${INFO} Menyalin ZyroXterm theme...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            rm -rf /$HOME/.ZyroXterm 2>/dev/null
-            cp -r /data/data/com.termux/files/home/.ZyroXterm /root/
-            chmod -R 755 /$HOME/.ZyroXterm
+            # Hapus yang lama jika ada
+            rm -rf /root/.ZyroXterm 2>/dev/null
+            rm -rf /home/*/.ZyroXterm 2>/dev/null
             
-            if [ -f /$HOME/.ZyroXterm/theme/main.py ]; then
-                sed -i 's/^    elif cmd.lower() == \"restart\":$/    elif cmd.lower() == \"restart\":\n        pass/' /$HOME/.ZyroXterm/theme/main.py 2>/dev/null
-                sed -i 's/^    elif cmd.lower() == \"exit\":$/    elif cmd.lower() == \"exit\":\n        break/' /$HOME/.ZyroXterm/theme/main.py 2>/dev/null
+            # Buat direktori dan salin
+            mkdir -p /root/.ZyroXterm
+            cp -r /data/data/com.termux/files/home/.ZyroXterm/* /root/.ZyroXterm/ 2>/dev/null || true
+            chmod -R 755 /root/.ZyroXterm
+            
+            # Perbaiki file start.py
+            if [ -f /root/.ZyroXterm/theme/start.py ]; then
+                sed -i 's/^    elif cmd.lower() == \"restart\":$/    elif cmd.lower() == \"restart\":\n        pass/' /root/.ZyroXterm/theme/start.py 2>/dev/null
+                sed -i 's/^    elif cmd.lower() == \"exit\":$/    elif cmd.lower() == \"exit\":\n        break/' /root/.ZyroXterm/theme/start.py 2>/dev/null
             fi
-        "
+        " 2>/dev/null
         
         echo -e "${INFO} Mengkonfigurasi .zshrc...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            cat >> /$HOME/.zshrc << 'EOF'
+            # Backup .zshrc jika ada
+            [ -f /root/.zshrc ] && cp /root/.zshrc /root/.zshrc.bak
+            
+            # Buat .zshrc baru dengan konfigurasi yang benar
+            cat > /root/.zshrc << 'EOF'
+# ZyroXterm 
 
-    python3 /$HOME/.ZyroXterm/theme/start.py
-    echo \"\"
+python3 $HOME/.ZyroXterm/theme/start.py
+
+# Aliases
+alias matrix='cmatrix'
+alias train='sl'
+alias myip='curl ifconfig.me'
+
+# Welcome message
+echo -e \"\\033[96m┌────────────────────────────────────────┐\\033[0m\"
+echo -e \"\\033[96m│\\033[0m     \\033[92mWelcome to ZyroXterm Terminal\\033[0m            \\033[96m│\\033[0m\"
+echo -e \"\\033[96m└────────────────────────────────────────┘\\033[0m\"
 EOF
-            chsh -s /usr/bin/zsh 2>/dev/null
-        "
+
+# Set zsh sebagai default shell di Linux
+chsh -s /usr/bin/zsh root 2>/dev/null || true
+" 2>/dev/null
         
-        cat > $HOME/${SELECTED_DISTRO}.sh << EOF
+        cat > "$HOME/${SELECTED_DISTRO}.sh" << EOF
 #!/bin/bash
-proot-distro login $SELECTED_DISTRO
+# Script untuk akses $SELECTED_DISTRO dengan ZyroXterm
+proot-distro login $SELECTED_DISTRO -- bash -c "zsh"
 EOF
-        chmod +x $HOME/${SELECTED_DISTRO}.sh
+        chmod +x "$HOME/${SELECTED_DISTRO}.sh"
         
         echo -e "${CHECK} Setup ZyroXterm di $SELECTED_DISTRO selesai!${RESET}"
         
@@ -238,29 +283,31 @@ EOF
         echo -e "  ${ARROW} Ketik: ${GREEN}./${SELECTED_DISTRO}.sh${RESET}"
         echo -e "  ${ARROW} Atau:  ${GREEN}proot-distro login $SELECTED_DISTRO${RESET}"
         echo ""
-        
     else
-        echo -e "\n${RED}${CROSS} Gagal menginstall $SELECTED_DISTRO${RESET}"
-        INSTALL_SUCCESS=false
+        echo -e "\n${RED}${CROSS} Gagal menginstall/mengupdate $SELECTED_DISTRO${RESET}"
     fi
 fi
 
-cat > $HOME/.zshrc << 'EOF'
-if [ -f "$HOME/.ZyroXterm/theme/start.py" ]; then
-    python "$HOME/.ZyroXterm/theme/start.py"
-    echo ""
-fi
+cat > "$HOME/.zshrc" << 'EOF'
+python "$HOME/.ZyroXterm/theme/start.py"
 
+# Aliases
 alias matrix='cmatrix'
 alias train='sl'
 alias myip='curl ifconfig.me'
-alias ubuntu='~/ubuntu.sh 2>/dev/null'
-alias debian='~/debian.sh 2>/dev/null'
-alias arch='~/arch.sh 2>/dev/null'
 
+# Alias untuk akses Linux (jika ada)
+[ -f "$HOME/ubuntu.sh" ] && alias ubuntu='~/ubuntu.sh'
+[ -f "$HOME/debian.sh" ] && alias debian='~/debian.sh'
+[ -f "$HOME/arch.sh" ] && alias arch='~/arch.sh'
+
+# Welcome message
 echo -e "\033[96m┌────────────────────────────────────────┐\033[0m"
 echo -e "\033[96m│\033[0m     \033[92mWelcome to ZyroXterm Terminal\033[0m            \033[96m│\033[0m"
 echo -e "\033[96m└────────────────────────────────────────┘\033[0m"
+
+# Set path
+export PATH="$PATH:$HOME/.local/bin"
 EOF
 
 clear
@@ -270,17 +317,19 @@ echo -e "${GREEN}╚════════════════════
 echo ""
 
 if [ "$INSTALL_SUCCESS" = true ]; then
-    echo -e "  ${CHECK} $SELECTED_DISTRO + ZyroXterm theme"
+    echo -e "  ${CHECK} $SELECTED_DISTRO + ZyroXterm berhasil di setup"
 fi
+
+echo -e "  ${CHECK} ZyroXterm untuk Termux berhasil di install"
+echo ""
 
 if [ "$INSTALL_SUCCESS" = true ]; then
-    echo ""
-    echo -e "${CYAN}🚀 AKSES LINUX:${RESET}"
+    echo -e "${CYAN}• AKSES LINUX:${RESET}"
     echo -e "  ${GREEN}[+]${RESET} Ketik: ${YELLOW}./${SELECTED_DISTRO}.sh${RESET}"
     echo -e "  ${GREEN}[+]${RESET} Atau:  ${YELLOW}proot-distro login $SELECTED_DISTRO${RESET}"
+    echo ""
 fi
 
-echo ""
 read -p "$(echo -e ${BOLD}${CYAN}"➜  Jalankan ZyroXterm sekarang? (y/n): "${RESET})" run_shell
 
 if [[ "$run_shell" =~ ^[Yy]$ ]]; then
