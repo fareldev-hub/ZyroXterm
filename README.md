@@ -1,4 +1,4 @@
-# ✨ ZYROXTERM THEME
+# ✨ ZYROXTERM 
 
 ![Termux](https://img.shields.io/badge/Termux-APP-green)
 ![Version](https://img.shields.io/badge/Version-1.1-blue)
@@ -7,19 +7,19 @@
 ![Python](https://img.shields.io/badge/Python-3.x-yellow)
 
 <p align="center">
-  <img src="screenshoot/hasil.png" alt="ZyroXterm Theme Preview" width="800">
+  <img src="screenshot/hasil.png" alt="ZyroXterm  Preview" width="800">
 </p>
 
 ## 📌 Tentang ZyroXterm
 
-ZyroXterm adalah tools untuk Termux yang memberikan tampilan terminal yg berbeda dari tampilan default termux, tools ini memiliki beberapa fitur command tambahan dan nyaman dipakai.
+ZyroXterm adalah tools untuk Termux yang dapat menjalan kan linux seperti debian, ubuntu dan arch linux serta memberikan tampilan terminal yg berbeda dari tampilan default termux, tools ini memiliki beberapa fitur command tambahan dan nyaman dipakai.
 
 ### 🛠️ Bahasa yang Digunakan
 
 | Bahasa | Versi | Kegunaan |
 |--------|-------|----------|
 | **Shell Script (Bash)** | 5.x | Installer dan konfigurasi otomatis |
-| **Python 3** | 3.x | Engine utama theme dan warna |
+| **Python 3** | 3.x | Engine utama  dan warna |
 
 ## 🔧 Instalasi
 
@@ -76,22 +76,34 @@ chmod +x install.sh
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 <p align="center">
-  <img src="screenshoot/install.png" alt="Tahap Install" width="600">
+  <img src="screenshot/install.png" alt="Tahap Install" width="600">
 </p>
 
 > **Input:** Ketik `Y` untuk melanjutkan instalasi
 
 ---
 
-### ✅ Tahap 2 - Startup Theme
+### ✅ Tahap 2 - Startup 
 
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 <p align="center">
-  <img src="screenshoot/setup.png" alt="Tahap Startup" width="600">
+  <img src="screenshot/setup.png" alt="Tahap Startup" width="600">
 </p>
 
 > **Input:** Ketik `Y` untuk melanjutkan
+
+---
+
+### ✅ Tahap 23- Pilih Linux
+
+Jika selesai, akan muncul tampilan seperti gambar berikut:
+
+<p align="center">
+  <img src="screenshot/linux.png" alt="Tahap Startup" width="600">
+</p>
+
+> **Input:** kamu tinggal input ajaa dan pilih linux mana yg ingin kamu install untuk melanjutkan
 
 ---
 
@@ -100,7 +112,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 ### Tema Telah Terpasang!
 
 <p align="center">
-  <img src="screenshoot/hasil.png" alt="Hasil Instalasi" width="600">
+  <img src="screenshot/hasil.png" alt="Hasil Instalasi" width="600">
 </p>
 
 ## 🚀 Cara Penggunaan
@@ -111,23 +123,50 @@ Setelah instalasi selesai, **RESTART** Termux atau jalankan:
 zsh
 ```
 
-Theme akan aktif secara otomatis! 🎉
+Setelah instalasi selesai, **JALANKAN LINUX** pada Termux menggunakan perintah:
+
+## melihat linux yg tekah terinstall
+```bash
+ls
+```
+
+## untuk debian
+```bash
+chmod +x debian.sh
+./debian.sh 
+```
+## untuk ubuntu
+```bash
+chmod +x ubuntu.sh
+./ubuntu.sh 
+```
+## untuk arch linux
+```bash
+chmod +x arch.sh
+./arxh.sh 
+```
+
+<p align="center">
+  <img src="screenshot/ubuntu.png" alt="Hasil Instalasi" width="600">
+</p>
+
+ akan aktif secara otomatis! 🎉
 
 ## 🔄 Uninstall
 
-Menghapus ZyroXterm Theme:
+Menghapus ZyroXterm :
 
 ```bash
-# Hapus folder theme
+# Hapus folder 
 rm -rf ~/.ZyroXterm
 
 # Hapus konfigurasi dari .zshrc
-nano ~/.zshrc  # Hapus bagian ZYROXTERM THEME
+nano ~/.zshrc  # Hapus bagian ZYROXTERM 
 ```
 
 ## 📝 Catatan Penting
 
-> **⚠️ JANGAN HAPUS** folder `.ZyroXterm` karena berisi konfigurasi theme!
+> **⚠️ JANGAN HAPUS** folder `.ZyroXterm` karena berisi konfigurasi !
 > 
 
 ## Troubleshooting
@@ -144,7 +183,7 @@ pkg install python python-pip -y
 pkg install zsh -y
 ```
 
-### Theme tidak muncul
+###  tidak muncul
 
 ```bash
 # Cek apakah folder ada
