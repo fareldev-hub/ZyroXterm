@@ -125,7 +125,7 @@ zsh
 
 Setelah instalasi selesai, **JALANKAN LINUX** pada Termux menggunakan perintah:
 
-## melihat linux yg tekah terinstall
+## melihat linux yg telah terinstall
 ```bash
 ls
 ```
