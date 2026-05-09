@@ -109,7 +109,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 ## ✅ Selesai!
 
-### Tema Telah Terpasang!
+### ZyroXterm Telah Terpasang!
 
 <p align="center">
   <img src="screenshot/hasil.png" alt="Hasil Instalasi" width="600">
