@@ -146,9 +146,25 @@ chmod +x arch.sh
 ./arxh.sh 
 ```
 
+## Atau kamu bisa memanggilnya langsung
+pastikan linux yg di panggil terlah terinstall
+```bash
+deb install
+```
+atau
+```bash
+debian run
+```
+
+selengkapnya Ketik :
+```bash
+help
+```
+
 <p align="center">
-  <img src="screenshot/ubuntu.png" alt="Hasil Instalasi" width="600">
+  <img src="screenshot/debian.png" alt="Hasil Instalasi" width="600">
 </p>
+
 
  akan aktif secara otomatis! 🎉
 
