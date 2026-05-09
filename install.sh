@@ -1,36 +1,54 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-CYAN='\033[96m'
-PURPLE='\033[95m'
-GREEN='\033[92m'
-YELLOW='\033[93m'
-RED='\033[91m'
-GRAY='\033[90m'
-RESET='\033[0m'
-BOLD='\033[1m'
-
 pkg install figlet
 clear
 
+GRAY='\033[0;37m'
+RESET='\033[0m'
+
+figlet_func() {
+    echo -e "${GRAY}"
+    figlet INSTALL
+    echo -e "${RESET}"
+    echo -e "${GRAY}Melakukan instalasi paket..${RESET}"
+}
+
+pkg install figlet -y > /dev/null 2>&1
+
+pkg install python3 -y
+clear
+figlet_func
+
+pkg install zsh -y
+clear
+figlet_func
+
+pkg install cmatrix -y
+clear
+figlet_func
+
+pkg install sl -y
+clear
+figlet_func
+
+pip install pyfiglet -y
+
+echo ""
+
+clear
+
 echo -e "${GRAY}"
-figlet INSTALL
+figlet ZyroXterm
 echo -e "${RESET}"
-echo -e "${GRAY}Melakukan instalasi paket..${RESET}"
-
-pkg install python3
-pkg install zsh
-pkg install cmatrix
-pkg install sl
-pip install pyfiglet
-
-echo -e "${YELLOW}Selesai √${RESET}"
-
-read -p "$(echo -e ${BOLD}${CYAN}"➜ Lanjut ke instalasi ZyroXterm Theme? (y/n): "${RESET})" pilihan
+echo -e "${YELLOW}Penginstalan Selesai √${RESET}"
+echo ""
+echo ""
+read -p "$(echo -e ${BOLD}${CYAN}"➜ Lanjut ke instalasi Ubuntu? (y/n): "${RESET})" pilihan
 
 if [[ ! "$pilihan" =~ ^[Yy]$ ]]; then
-    echo -e "\n${YELLOW}✗ Instalasi dibatalkan${RESET}"
+    
     exit 0
 fi
 
 chmod +x theme/startup.sh
-./theme/startup.sh
+    ./theme/startup.sh

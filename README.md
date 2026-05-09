@@ -12,61 +12,16 @@
 
 ## 📌 Tentang ZyroXterm
 
-ZyroXterm adalah theme aesthetic untuk Termux yang memberikan tampilan terminal modern dengan perpaduan warna neon khas. Theme ini akan mengubah tampilan prompt, warna teks, dan keseluruhan visual Termux menjadi lebih keren dan nyaman dipakai.
+ZyroXterm adalah tools untuk Termux yang memberikan tampilan terminal yg berbeda dari tampilan default termux, tools ini memiliki beberapa fitur command tambahan dan nyaman dipakai.
 
 ### 🛠️ Bahasa yang Digunakan
 
 | Bahasa | Versi | Kegunaan |
 |--------|-------|----------|
-| 🐚 **Shell Script (Bash)** | 5.x | Installer dan konfigurasi otomatis |
-| 🐍 **Python 3** | 3.x | Engine utama theme dan warna |
-
-## 🎨 Fitur
-
-| Fitur | Deskripsi |
-|-------|-----------|
-| 🎨 **Warna Neon** | Tampilan dengan warna cyan, ungu, dan hijau neon |
-| ✨ **Prompt Keren** | Prompt aesthetic dengan icon dan gradien |
-| 🚀 **Auto-Start** | Tema aktif otomatis setiap Termux dibuka |
-| 💾 **Ringan** | Tidak memberatkan performa Termux |
-| 🛡️ **Aman** | Tidak mengubah file sistem penting |
-| 🎨 **16+ Warna** | Palette warna lengkap (Teal, Cyan, Violet, Pink, dll) |
-
-## 🎨 Color Palette
-
-```python
-# ── Color Palette ZyroXterm ──
-C_BLACK   = "#232"  # Hitam
-C_DGRAY   = "#235"  # Abu gelap
-C_GRAY    = "#240"  # Abu
-C_MGRAY   = "#245"  # Abu medium
-C_LGRAY   = "#250"  # Abu terang
-C_WHITE   = "#255"  # Putih
-
-C_TEAL    = "#43"   # Teal neon
-C_CYAN    = "#51"   # Cyan terang
-C_SKY     = "#75"   # Biru langit
-C_BLUE    = "#69"   # Biru
-C_VIOLET  = "#99"   # Violet
-C_PURPLE  = "#135"  # Ungu
-C_MAGENTA = "#171"  # Magenta
-C_PINK    = "#213"  # Pink
-C_ROSE    = "#204"  # Rose
-C_RED     = "#196"  # Merah
-C_ORANGE  = "#208"  # Oranye
-C_GOLD    = "#220"  # Emas
-C_YELLOW  = "#226"  # Kuning
-C_LIME    = "#118"  # Limau
-C_GREEN   = "#82"   # Hijau
-```
+| **Shell Script (Bash)** | 5.x | Installer dan konfigurasi otomatis |
+| **Python 3** | 3.x | Engine utama theme dan warna |
 
 ## 🔧 Instalasi
-
-### Prasyarat
-
-<p align="center">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCgB2R10-mlTl-NRQzpSwztZo9efN9sXX1dQvuu2Y4VA&s=10" alt="Requirements" width="400">
-</p>
 
 ```bash
 # Pastikan Python 3
@@ -174,11 +129,8 @@ nano ~/.zshrc  # Hapus bagian ZYROXTERM THEME
 
 > **⚠️ JANGAN HAPUS** folder `.ZyroXterm` karena berisi konfigurasi theme!
 > 
-> **💡 TIPS**: Untuk melihat folder tersembunyi: `ls -la ~/.ZyroXterm`
-> 
-> **🎨 Info Versi**: System Version `1.1`
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error: Python tidak ditemukan
 
@@ -197,10 +149,6 @@ pkg install zsh -y
 ```bash
 # Cek apakah folder ada
 ls -la ~/.ZyroXterm
-
-# Manual load theme
-python ~/.ZyroXterm/theme/main.py
-```
 
 ## 📞 Kontak & Dukungan
 

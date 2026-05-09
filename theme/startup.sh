@@ -9,125 +9,285 @@ GRAY='\033[90m'
 RESET='\033[0m'
 BOLD='\033[1m'
 
+# Function untuk menampilkan figlet
+figlet_func() {
+    clear
+    echo -e "${GRAY}"
+    figlet INSTALL
+    echo -e "${RESET}"
+    echo -e "${GRAY}Melakukan instalasi paket..${RESET}"
+}
+
+# Function untuk install paket (silent untuk dependencies awal)
+install_package() {
+    local package=$1
+    local installer=$2
+    
+    if [ "$installer" == "pip" ]; then
+        if ! pip show $package &> /dev/null; then
+            pip install $package -q 2>/dev/null
+        fi
+    else
+        if ! command -v $package &> /dev/null; then
+            pkg install $package -y > /dev/null 2>&1
+        fi
+    fi
+}
+
 clear
 
+# ==========================================
+# TAMPILAN AWAL
+# ==========================================
 echo -e "${GRAY}"
-figlet ZyroXterm
+figlet "ZyroXterm"
 echo -e "${RESET}"
 
 echo -e "${GRAY}Jadikan ZyroXterm Sebagai terminal default??${RESET}"
-echo -e "${YELLOW}Ini akan membuat ZyroXterm menjadi permanent di terminal anda setiap kali termux terbuka tampilan ZyroXterm akan muncul secara otomatis${RESET}"
+echo -e "${YELLOW}Proses ini akan mengubah tampilan termux dan menetapkan ZyroXterm sebagai terminal default${RESET}"
 echo ""
 
-read -p "$(echo -e ${BOLD}${CYAN}"➜  Mulai instalasi ZyroXterm Theme? (y/n): "${RESET})" pilihan
+read -p "$(echo -e ${BOLD}${CYAN}"➜  Mulai instalasi ZyroXterm? (y/n): "${RESET})" pilihan
 
 if [[ ! "$pilihan" =~ ^[Yy]$ ]]; then
     echo -e "\n${YELLOW}✗ Instalasi dibatalkan${RESET}"
     exit 0
 fi
 
-echo -e "\n${GREEN}${BOLD}════════════════════════════════════════════════════════════════${RESET}"
-echo -e "${GREEN}${BOLD}                 MEMULAI PROSES INSTALASI                          ${RESET}"
-echo -e "${GREEN}${BOLD}════════════════════════════════════════════════════════════════${RESET}\n"
+# ==========================================
+# INSTALL DEPENDENCIES (SILENT)
+# ==========================================
+install_package "figlet"
+install_package "python3"
+install_package "zsh"
+install_package "cmatrix"
+install_package "sl"
+install_package "pyfiglet" "pip"
 
+# ==========================================
+# PROSES ZYROXTERM (SILENT)
+# ==========================================
 cd $HOME
 
-# Cek folder ZyroXterm
-if [ ! -d "$HOME/ZyroXterm" ]; then
-    echo -e "${RED}✗ Folder ZyroXterm tidak ditemukan${RESET}"
+# Cek folder
+if [ ! -d "$HOME/ZyroXterm" ] || [ ! -f "$HOME/ZyroXterm/theme/start.py" ]; then
+    echo -e "\n${RED}✗ Folder atau file ZyroXterm tidak ditemukan${RESET}"
     exit 1
 fi
 
-# Cek file main.py
-if [ ! -f "$HOME/ZyroXterm/theme/main.py" ]; then
-    echo -e "${RED}✗ File main.py tidak ditemukan${RESET}"
-    exit 1
+# Fix main.py
+if [ -f "$HOME/ZyroXterm/theme/main.py" ]; then
+    sed -i 's/^    elif cmd.lower() == "restart":$/    elif cmd.lower() == "restart":\n        pass/' "$HOME/ZyroXterm/theme/main.py" 2>/dev/null
+    sed -i 's/^    elif cmd.lower() == "exit":$/    elif cmd.lower() == "exit":\n        break/' "$HOME/ZyroXterm/theme/main.py" 2>/dev/null
 fi
-echo -e "${GREEN}✓ File siap diinstall${RESET}"
 
 # Rename folder
-if mv ZyroXterm .ZyroXterm 2>/dev/null; then
-    echo -e "${GREEN}✓ Folder berhasil dikonfigurasi${RESET}"
-else
-    echo -e "${RED}✗ Gagal konfigurasi folder${RESET}"
-    exit 1
-fi
+[ -d "$HOME/ZyroXterm" ] && [ ! -d "$HOME/.ZyroXterm" ] && mv ZyroXterm .ZyroXterm
 
-# Cek dan install zsh
-if ! command -v zsh &> /dev/null; then
-    echo -e "${GRAY}➜ Menginstall shell...${RESET}"
-    if pkg install zsh -y > /dev/null 2>&1; then
-        echo -e "${GREEN}✓ Shell berhasil terinstall${RESET}"
-    else
-        echo -e "${RED}✗ Gagal install shell${RESET}"
-        exit 1
-    fi
-else
-    echo -e "${GREEN}✓ Shell sudah terinstall${RESET}"
-fi
-
-# Setup autostart
-echo -e "${GRAY}➜ Menambahkan ke .zshrc${RESET}"
-
-# Backup .zshrc jika ada
+# Backup .zshrc ke zip
 if [ -f "$HOME/.zshrc" ]; then
-    BACKUP_FILE="$HOME/.zshrc.backup.$(date +%Y%m%d_%H%M%S)"
-    cp $HOME/.zshrc $BACKUP_FILE
-    echo -e "${GREEN}✓ Backup .zshrc dibuat${RESET}"
+    zip -q $HOME/default_zshrc.zip $HOME/.zshrc 2>/dev/null
 fi
 
-# Hapus konfigurasi lama jika ada
+# Hapus konfigurasi lama
 if [ -f "$HOME/.zshrc" ]; then
     sed -i '/# ==========================================/d' $HOME/.zshrc
     sed -i '/# ZYROXTERM THEME/d' $HOME/.zshrc
-    sed -i '/# ==========================================/d' $HOME/.zshrc
-    sed -i '/if \[ -f "\$HOME\/.ZyroXterm\/theme\/main.py" \]; then/d' $HOME/.zshrc
-    sed -i '/    python "\$HOME\/.ZyroXterm\/theme\/main.py"/d' $HOME/.zshrc
+    sed -i '/if \[ -f "\$HOME\/.ZyroXterm\/theme\/start.py" \]; then/d' $HOME/.zshrc
+    sed -i '/    python "\$HOME\/.ZyroXterm\/theme\/start.py"/d' $HOME/.zshrc
     sed -i '/    echo ""/d' $HOME/.zshrc
     sed -i '/fi/d' $HOME/.zshrc
 fi
 
-# Tambahkan konfigurasi baru (tanpa bug echo "error")
-cat >> $HOME/.zshrc << 'EOF'
+# Set shell ke zsh
+[[ $SHELL != *"zsh"* ]] && chsh -s zsh 2>/dev/null
+
+# ==========================================
+# MENU PILIHAN LINUX
+# ==========================================
+echo ""
+echo -e "${CYAN}┌────────────────────────────────────────┐${RESET}"
+echo -e "${CYAN}│${RESET}     ${BOLD}INSTALL LINUX DISTRIBUTION${RESET}          ${CYAN}│${RESET}"
+echo -e "${CYAN}└────────────────────────────────────────┘${RESET}"
+echo ""
+echo -e "  ${GREEN}1)${RESET} Ubuntu 22.04 LTS"
+echo -e "  ${GREEN}2)${RESET} Debian 12"
+echo -e "  ${GREEN}3)${RESET} Arch Linux"
+echo -e "  ${RED}0)${RESET} Skip"
+echo ""
+read -p "$(echo -e ${BOLD}${CYAN}"➜  Pilih (0-3): "${RESET})" linux_choice
+
+SELECTED_DISTRO=""
+INSTALL_SUCCESS=false
+
+case $linux_choice in
+    1) SELECTED_DISTRO="ubuntu" ;;
+    2) SELECTED_DISTRO="debian" ;;
+    3) SELECTED_DISTRO="archlinux" ;;
+    0) 
+        echo -e "\n${YELLOW}Skip install Linux${RESET}"
+        ;;
+    *) 
+        echo -e "\n${RED}Pilihan tidak valid${RESET}"
+        ;;
+esac
+
+# ==========================================
+# INSTALL LINUX (TAMPILKAN PROSES)
+# ==========================================
+if [ -n "$SELECTED_DISTRO" ]; then
+    echo ""
+    echo -e "${GREEN}╔════════════════════════════════════════════╗${RESET}"
+    echo -e "${GREEN}║${RESET}     MENGINSTALL ${BOLD}$SELECTED_DISTRO${RESET}${GREEN}                    ║${RESET}"
+    echo -e "${GREEN}╚════════════════════════════════════════════╝${RESET}"
+    echo ""
+    
+    # Install proot-distro
+    echo -e "${YELLOW}📦 Menginstall proot-distro...${RESET}"
+    pkg install proot-distro -y
+    
+    # Hapus jika ada
+    if proot-distro list 2>/dev/null | grep -q $SELECTED_DISTRO; then
+        echo -e "${YELLOW}⚠ $SELECTED_DISTRO sudah terinstall, menghapus yang lama...${RESET}"
+        proot-distro remove $SELECTED_DISTRO
+    fi
+    
+    # Install dengan tampilan proses
+    echo -e "${YELLOW}🐧 Menginstall $SELECTED_DISTRO (proses download & install)...${RESET}"
+    echo -e "${GRAY}⏳ Ini mungkin memakan waktu 5-10 menit tergantung kecepatan internet${RESET}"
+    echo ""
+    
+    # Install dengan output terlihat
+    proot-distro install $SELECTED_DISTRO
+    
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo -e "${GREEN}✅ $SELECTED_DISTRO berhasil diinstall!${RESET}"
+        INSTALL_SUCCESS=true
+        
+        # ==========================================
+        # SETUP ZYROXTERM DI LINUX (TAMPILKAN PROSES)
+        # ==========================================
+        echo ""
+        echo -e "${CYAN}╔════════════════════════════════════════════╗${RESET}"
+        echo -e "${CYAN}║${RESET}     SETUP ZYROXTERM DI ${BOLD}$SELECTED_DISTRO${RESET}${CYAN}              ║${RESET}"
+        echo -e "${CYAN}╚════════════════════════════════════════════╝${RESET}"
+        echo ""
+        
+        echo -e "${YELLOW}🔧 Menginstall packages (zsh, python3, pip)...${RESET}"
+        proot-distro login $SELECTED_DISTRO -- bash -c "
+            apt update -y
+            apt install -y zsh python3 python3-pip
+        "
+        
+        echo -e "${YELLOW}📦 Menginstall pyfiglet...${RESET}"
+        proot-distro login $SELECTED_DISTRO -- bash -c "
+            pip3 install pyfiglet
+        " 2>/dev/null
+        
+        echo -e "${YELLOW}📁 Menyalin ZyroXterm theme...${RESET}"
+        proot-distro login $SELECTED_DISTRO -- bash -c "
+            rm -rf /root/.ZyroXterm 2>/dev/null
+            cp -r /data/data/com.termux/files/home/.ZyroXterm /root/
+            chmod -R 755 /root/.ZyroXterm
+        "
+        
+        echo -e "${YELLOW}⚙️ Mengkonfigurasi .zshrc...${RESET}"
+        proot-distro login $SELECTED_DISTRO -- bash -c "
+            cat >> /root/.zshrc << 'EOF'
 
 # ==========================================
 # ZYROXTERM THEME
 # ==========================================
-if [ -f "$HOME/.ZyroXterm/theme/main.py" ]; then
-    python "$HOME/.ZyroXterm/theme/main.py"
-    echo ""
+if [ -f \"/root/.ZyroXterm/theme/start.py\" ]; then
+    python3 /root/.ZyroXterm/theme/start.py
+    echo \"\"
 fi
 # ==========================================
 EOF
-echo -e "${GREEN}✓ Konfigurasi ZyroXtheme ditambahkan${RESET}"
-
-# Set shell default
-if [[ $SHELL != *"zsh"* ]]; then
-    if chsh -s zsh 2>/dev/null; then
-        echo -e "${GREEN}✓ Zsh berhasil dijadikan default${RESET}"
+            chsh -s /usr/bin/zsh 2>/dev/null
+        "
+        
+        # Buat script login
+        cat > $HOME/${SELECTED_DISTRO}.sh << EOF
+#!/bin/bash
+# Script login ke $SELECTED_DISTRO
+proot-distro login $SELECTED_DISTRO
+EOF
+        chmod +x $HOME/${SELECTED_DISTRO}.sh
+        
+        echo -e "${GREEN}✅ Setup ZyroXterm di $SELECTED_DISTRO selesai!${RESET}"
+        
+        # Tampilkan info akses
+        echo ""
+        echo -e "${CYAN}┌────────────────────────────────────────┐${RESET}"
+        echo -e "${CYAN}│${RESET}     ${GREEN}CARA AKSES $SELECTED_DISTRO${RESET}                 ${CYAN}│${RESET}"
+        echo -e "${CYAN}└────────────────────────────────────────┘${RESET}"
+        echo -e "  ${YELLOW}›${RESET} Ketik: ${GREEN}./${SELECTED_DISTRO}.sh${RESET}"
+        echo -e "  ${YELLOW}›${RESET} Atau:  ${GREEN}proot-distro login $SELECTED_DISTRO${RESET}"
+        echo ""
+        
     else
-        echo -e "${YELLOW}⚠ Gagal mengubah shell default, silahkan restart Termux${RESET}"
+        echo -e "\n${RED}❌ Gagal menginstall $SELECTED_DISTRO${RESET}"
+        INSTALL_SUCCESS=false
     fi
-else
-    echo -e "${GREEN}✓ Shell sudah menjadi default${RESET}"
+fi
+
+# ==========================================
+# FINAL .ZSHRC
+# ==========================================
+cat > $HOME/.zshrc << 'EOF'
+# ==========================================
+# ZYROXTERM THEME
+# ==========================================
+if [ -f "$HOME/.ZyroXterm/theme/start.py" ]; then
+    python "$HOME/.ZyroXterm/theme/start.py"
+    echo ""
+fi
+
+# Aliases
+alias matrix='cmatrix'
+alias train='sl'
+alias myip='curl ifconfig.me'
+alias ubuntu='~/ubuntu.sh 2>/dev/null'
+alias debian='~/debian.sh 2>/dev/null'
+alias arch='~/arch.sh 2>/dev/null'
+
+# Welcome
+echo -e "\033[96m┌────────────────────────────────────────┐\033[0m"
+echo -e "\033[96m│\033[0m     \033[92mWelcome to ZyroXterm Terminal\033[0m            \033[96m│\033[0m"
+echo -e "\033[96m└────────────────────────────────────────┘\033[0m"
+# ==========================================
+EOF
+
+# ==========================================
+# TAMPILAN AKHIR
+# ==========================================
+clear
+echo -e "${GREEN}╔════════════════════════════════════════════╗${RESET}"
+echo -e "${GREEN}║${RESET}     ${BOLD}INSTALASI SELESAI${RESET}                         ${GREEN}║${RESET}"
+echo -e "${GREEN}╚════════════════════════════════════════════╝${RESET}"
+echo ""
+
+if [ "$INSTALL_SUCCESS" = true ]; then
+    echo -e "  ${GREEN}✓${RESET} $SELECTED_DISTRO + ZyroXterm theme"
 fi
 
 echo ""
-echo ""
 
-echo -e "${GREEN}${BOLD}                   INSTALASI SELESAI!                              ${RESET}"
-echo ""
+if [ "$INSTALL_SUCCESS" = true ]; then
+    echo ""
+    echo -e "${CYAN}🚀 AKSES LINUX:${RESET}"
+    echo -e "  ${GREEN}•${RESET} Ketik: ${YELLOW}./${SELECTED_DISTRO}.sh${RESET}"
+    echo -e "  ${GREEN}•${RESET} Atau:  ${YELLOW}proot-distro login $SELECTED_DISTRO${RESET}"
+fi
 
-echo -e "${PURPLE}${BOLD}✨ ZyroXterm Theme siap digunakan!${RESET}"
 echo ""
-echo -e "${YELLOW}${BOLD}▶ LANGKAH SELANJUTNYA:${RESET}"
-echo -e "${GRAY}  • RESTART Termux${RESET}"
-echo -e "${GRAY}  • atau ketik: ${CYAN}zsh${RESET}"
-echo ""
+read -p "$(echo -e ${BOLD}${CYAN}"➜  Jalankan ZyroXterm sekarang? (y/n): "${RESET})" run_shell
 
-read -p "$(echo -e ${BOLD}${CYAN}"➜  Jalankan shell sekarang? (y/n): "${RESET})" run_shell
 if [[ "$run_shell" =~ ^[Yy]$ ]]; then
     exec zsh
 else
-    echo -e "${GRAY}➜ Restart Termux untuk melihat theme${RESET}"
+    echo -e "\n${GRAY}➜ Restart Termux untuk melihat perubahan${RESET}"
+    echo -e "${CYAN}➜ Atau ketik 'zsh' untuk langsung menggunakan ZyroXterm${RESET}"
 fi
