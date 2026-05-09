@@ -204,6 +204,7 @@ pkg install zsh -y
 ```bash
 # Cek apakah folder ada
 ls -la ~/.ZyroXterm
+```
 
 ## 📞 Kontak & Dukungan
 
