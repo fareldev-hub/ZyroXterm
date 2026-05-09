@@ -14,38 +14,6 @@ CROSS="${RED}[-]${RESET}"
 INFO="${YELLOW}[*]${RESET}"
 ARROW="${CYAN}->${RESET}"
 
-# Animasi loading bar
-show_loading() {
-    local pid=$1
-    local delay=0.1
-    local spinstr='|/-\'
-    local msg="${2:-Menginstall packages...}"
-    
-    while ps -p $pid > /dev/null 2>&1; do
-        for i in $(seq 0 3); do
-            printf "\r${CYAN}⣿${RESET} ${msg} ${CYAN}${spinstr:$i:1}${RESET} "
-            sleep $delay
-        done
-    done
-    printf "\r${GREEN}✓${RESET} ${msg} Selesai!    \n"
-}
-
-# Progress bar style 2
-show_progress() {
-    local current=$1
-    local total=$2
-    local msg=$3
-    local width=50
-    local percentage=$((current * 100 / total))
-    local filled=$((width * current / total))
-    local empty=$((width - filled))
-    
-    printf "\r${CYAN}┃${RESET} ${msg} ${YELLOW}[${RESET}"
-    printf "%${filled}s" | tr ' ' '█'
-    printf "%${empty}s" | tr ' ' '░'
-    printf "${YELLOW}]${RESET} ${GREEN}${percentage}%%${RESET}"
-}
-
 figlet_func() {
     clear
     echo -e "${GRAY}"
@@ -195,11 +163,11 @@ if [ -n "$SELECTED_DISTRO" ]; then
     echo ""
     
     echo -e "${INFO} Menginstall proot-distro...${RESET}"
-    pkg install proot-distro -y > /dev/null 2>&1
+    pkg install proot-distro -y
     
     if check_linux_status $SELECTED_DISTRO; then
         echo -e "${YELLOW}${INFO} $SELECTED_DISTRO sudah terinstall, menghapus yang lama...${RESET}"
-        proot-distro remove $SELECTED_DISTRO > /dev/null 2>&1
+        proot-distro remove $SELECTED_DISTRO
         rm -rf $PREFIX/var/lib/proot-distro/installed-rootfs/$SELECTED_DISTRO 2>/dev/null
     fi
     
@@ -207,23 +175,7 @@ if [ -n "$SELECTED_DISTRO" ]; then
     echo -e "${GRAY}${INFO} Ini mungkin memakan waktu 5-10 menit tergantung kecepatan internet${RESET}"
     echo ""
     
-    # Install dengan animasi loading
-    proot-distro install $SELECTED_DISTRO > /tmp/install_log.txt 2>&1 &
-    INSTALL_PID=$!
-    
-    # Animasi loading selama proses install
-    local step=0
-    local total_steps=100
-    while ps -p $INSTALL_PID > /dev/null 2>&1; do
-        step=$((step + 2))
-        if [ $step -gt $total_steps ]; then
-            step=$total_steps
-        fi
-        show_progress $step $total_steps "Menginstall $SELECTED_DISTRO"
-        sleep 0.5
-    done
-    printf "\n"
-    wait $INSTALL_PID
+    proot-distro install $SELECTED_DISTRO
     
     if [ $? -eq 0 ]; then
         echo ""
@@ -236,24 +188,17 @@ if [ -n "$SELECTED_DISTRO" ]; then
         echo -e "${CYAN}╚════════════════════════════════════════════╝${RESET}"
         echo ""
         
-        # Install packages dengan animasi
-        echo -e "${INFO} Menginstall packages (zsh, python3, python3-pip)...${RESET}"
+        echo -e "${INFO} Menginstall packages...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            apt update -y > /dev/null 2>&1
-            apt install -y zsh python3 python3-pip > /dev/null 2>&1
-        " &
-        PKG_PID=$!
-        show_loading $PKG_PID "Menginstall system packages"
+            apt update -y
+            apt install -y zsh python3 python3-pip
+        " 
         
-        # Install Python packages dengan animasi
-        echo -e "${INFO} Menginstall Python packages (setuptools, cython, pyfiglet)...${RESET}"
+        echo -e "${INFO} Menginstall Python packages...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            pip3 install setuptools cython pyfiglet > /dev/null 2>&1
-        " &
-        PIP_PID=$!
-        show_loading $PIP_PID "Menginstall Python packages"
+            pip install setuptools cython pyfiglet
+        " 
         
-        # Copy ZyroXterm dengan animasi
         echo -e "${INFO} Menyalin ZyroXterm theme...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
             rm -rf /root/.ZyroXterm 2>/dev/null
@@ -264,36 +209,20 @@ if [ -n "$SELECTED_DISTRO" ]; then
                 sed -i 's/^    elif cmd.lower() == \"restart\":$/    elif cmd.lower() == \"restart\":\n        pass/' /root/.ZyroXterm/theme/main.py 2>/dev/null
                 sed -i 's/^    elif cmd.lower() == \"exit\":$/    elif cmd.lower() == \"exit\":\n        break/' /root/.ZyroXterm/theme/main.py 2>/dev/null
             fi
-        " &
-        COPY_PID=$!
+        "
         
-        # Animasi copy dengan progress bar
-        local copy_step=0
-        while ps -p $COPY_PID > /dev/null 2>&1; do
-            copy_step=$((copy_step + 5))
-            [ $copy_step -gt 100 ] && copy_step=100
-            show_progress $copy_step 100 "Menyalin file ZyroXterm"
-            sleep 0.3
-        done
-        printf "\n"
-        wait $COPY_PID
-        
-        # Konfigurasi .zshrc
         echo -e "${INFO} Mengkonfigurasi .zshrc...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
             cat >> /root/.zshrc << 'EOF'
 
-if [ -f \"/root/.ZyroXterm/theme/start.py\" ]; then
+if [ -f \"$HOME/.ZyroXterm/theme/start.py\" ]; then
     python3 /root/.ZyroXterm/theme/start.py
     echo \"\"
 fi
 EOF
             chsh -s /usr/bin/zsh 2>/dev/null
-        " &
-        CONF_PID=$!
-        show_loading $CONF_PID "Mengkonfigurasi .zshrc"
+        "
         
-        # Buat script akses
         cat > $HOME/${SELECTED_DISTRO}.sh << EOF
 #!/bin/bash
 proot-distro login $SELECTED_DISTRO
