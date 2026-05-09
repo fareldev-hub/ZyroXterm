@@ -196,29 +196,29 @@ if [ -n "$SELECTED_DISTRO" ]; then
         
         echo -e "${INFO} Menginstall Python packages...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            pip install setuptools cython pyfiglet
+            pip install setuptools --break-system-packages
+            pip install cython --break-system-packages
+            pip install pyfiglet --break-system-packages
         " 
         
         echo -e "${INFO} Menyalin ZyroXterm theme...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            rm -rf /root/.ZyroXterm 2>/dev/null
+            rm -rf /$HOME/.ZyroXterm 2>/dev/null
             cp -r /data/data/com.termux/files/home/.ZyroXterm /root/
-            chmod -R 755 /root/.ZyroXterm
+            chmod -R 755 /$HOME/.ZyroXterm
             
-            if [ -f /root/.ZyroXterm/theme/main.py ]; then
-                sed -i 's/^    elif cmd.lower() == \"restart\":$/    elif cmd.lower() == \"restart\":\n        pass/' /root/.ZyroXterm/theme/main.py 2>/dev/null
-                sed -i 's/^    elif cmd.lower() == \"exit\":$/    elif cmd.lower() == \"exit\":\n        break/' /root/.ZyroXterm/theme/main.py 2>/dev/null
+            if [ -f /$HOME/.ZyroXterm/theme/main.py ]; then
+                sed -i 's/^    elif cmd.lower() == \"restart\":$/    elif cmd.lower() == \"restart\":\n        pass/' /$HOME/.ZyroXterm/theme/main.py 2>/dev/null
+                sed -i 's/^    elif cmd.lower() == \"exit\":$/    elif cmd.lower() == \"exit\":\n        break/' /$HOME/.ZyroXterm/theme/main.py 2>/dev/null
             fi
         "
         
         echo -e "${INFO} Mengkonfigurasi .zshrc...${RESET}"
         proot-distro login $SELECTED_DISTRO -- bash -c "
-            cat >> /root/.zshrc << 'EOF'
+            cat >> /$HOME/.zshrc << 'EOF'
 
-if [ -f \"$HOME/.ZyroXterm/theme/start.py\" ]; then
-    python3 /root/.ZyroXterm/theme/start.py
+    python3 /$HOME/.ZyroXterm/theme/start.py
     echo \"\"
-fi
 EOF
             chsh -s /usr/bin/zsh 2>/dev/null
         "
