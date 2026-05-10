@@ -698,9 +698,9 @@ def print_help():
         ("exit",   "Exit terminal session"),
         ("clear",  "Clear screen & redraw"),
         ("help",   "Show this help menu"),
-        ("zyroXdebian",  "Run linux debian"),
-        ("zyroXubuntu",  "Run linux ubuntu"),
-        ("zyroXarch",  "Run Arch linux"),
+        ("zxr debian",  "Run linux debian"),
+        ("zxr ubuntu",  "Run linux ubuntu"),
+        ("zxr arch",  "Run Arch linux"),
         ("reinstall",   "Reinstall ZyroXterm"),
         ("sys",    "System info with animation"),
         ("about",  "Author & project info"),
@@ -933,13 +933,13 @@ def main():
                 os.chdir("ZyroXterm")
                 os.system("chmod +x theme/startup.sh && bash theme/startup.sh")
                 
-            elif cmd.lower() == "zyroXdebian":
+            elif cmd.lower() == "zxr debian":
                 os.system("bash $HOME/debian.sh")
                 
-            elif cmd.lower() == "zyroXubuntu":
+            elif cmd.lower() == "zxr ubuntu":
                 os.system("bash $HOME/ubuntu.sh")
                 
-            elif cmd.lower() == "zyroXarch":
+            elif cmd.lower() == "zxr arch":
                 os.system("bash $HOME/archlinux.sh")
                 
             elif cmd.lower() == "uninstall":
