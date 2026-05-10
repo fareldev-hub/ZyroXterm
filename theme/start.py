@@ -941,7 +941,7 @@ def main():
                 os.system("bash $HOME/ubuntu.sh")
                 
             elif cmd.lower() == "zyroXarch":
-                os.system("bash $HOME/arch.sh")
+                os.system("bash $HOME/archlinux.sh")
                 
             elif cmd.lower() == "uninstall":
                 os.system("bash $HOME/.ZyroXterm/uninstall.sh")
