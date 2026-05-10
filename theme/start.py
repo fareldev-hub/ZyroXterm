@@ -3,7 +3,9 @@ import socket
 import time
 import subprocess
 import json
+import platform
 import re
+import shutil
 import sys
 from datetime import datetime
 import pyfiglet
@@ -281,9 +283,294 @@ def draw_banner():
     print()
 
 
+def get_os_info():
+    system = platform.system()
+    
+    if system == "Linux" or os.path.exists("/system/bin/getprop"):
+        try:
+            result = subprocess.run(["getprop", "ro.build.version.release"], 
+                                capture_output=True, text=True, timeout=2)
+            android_ver = result.stdout.strip()
+            
+            result2 = subprocess.run(["getprop", "ro.product.model"], 
+                                 capture_output=True, text=True, timeout=2)
+            model = result2.stdout.strip()
+            
+            if android_ver:
+                if "TERMUX_VERSION" in os.environ or os.path.exists("/data/data/com.termux"):
+                    return f"Android {android_ver} (Termux)"
+                return f"Android {android_ver} ({model})" if model else f"Android {android_ver}"
+                
+        except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+            pass
+        
+        try:
+            if os.path.exists("/etc/os-release"):
+                with open("/etc/os-release") as f:
+                    content = f.read()
+                    name = ""
+                    version = ""
+                    for line in content.split("\n"):
+                        if line.startswith("NAME="):
+                            name = line.split("=")[1].strip('"')
+                        if line.startswith("VERSION="):
+                            version = line.split("=")[1].strip('"')
+                    if name:
+                        return f"{name} {version}" if version else name
+        except Exception:
+            pass
+            
+        return f"Linux {platform.release()}"
+        
+    elif system == "Darwin":
+        try:
+            result = subprocess.run(["sw_vers", "-productVersion"], 
+                                capture_output=True, text=True, timeout=2)
+            mac_ver = result.stdout.strip()
+            return f"macOS {mac_ver}" if mac_ver else "macOS"
+        except:
+            return "macOS"
+            
+    elif system == "Windows":
+        try:
+            result = subprocess.run(["wmic", "os", "get", "Caption", "/value"], 
+                                capture_output=True, text=True, timeout=2)
+            for line in result.stdout.split("\n"):
+                if "Caption=" in line:
+                    return line.split("=")[1].strip()
+        except:
+            pass
+        return f"Windows {platform.release()}"
+        
+    return system
+
+def get_os_info():
+    system = platform.system()
+    
+    if system == "Linux" or os.path.exists("/system/bin/getprop"):
+        try:
+            result = subprocess.run(["getprop", "ro.build.version.release"], 
+                                capture_output=True, text=True, timeout=2)
+            android_ver = result.stdout.strip()
+            
+            result2 = subprocess.run(["getprop", "ro.product.model"], 
+                                 capture_output=True, text=True, timeout=2)
+            model = result2.stdout.strip()
+            
+            if android_ver:
+                if "TERMUX_VERSION" in os.environ or os.path.exists("/data/data/com.termux"):
+                    return f"Android {android_ver} (Termux)"
+                return f"Android {android_ver} ({model})" if model else f"Android {android_ver}"
+                
+        except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+            pass
+        
+        try:
+            if os.path.exists("/etc/os-release"):
+                with open("/etc/os-release") as f:
+                    content = f.read()
+                    name = ""
+                    version = ""
+                    for line in content.split("\n"):
+                        if line.startswith("NAME="):
+                            name = line.split("=")[1].strip('"')
+                        if line.startswith("VERSION="):
+                            version = line.split("=")[1].strip('"')
+                    if name:
+                        return f"{name} {version}" if version else name
+        except Exception:
+            pass
+            
+        return f"Linux {platform.release()}"
+        
+    elif system == "Darwin":
+        try:
+            result = subprocess.run(["sw_vers", "-productVersion"], 
+                                capture_output=True, text=True, timeout=2)
+            mac_ver = result.stdout.strip()
+            return f"macOS {mac_ver}" if mac_ver else "macOS"
+        except:
+            return "macOS"
+            
+    elif system == "Windows":
+        try:
+            result = subprocess.run(["wmic", "os", "get", "Caption", "/value"], 
+                                capture_output=True, text=True, timeout=2)
+            for line in result.stdout.split("\n"):
+                if "Caption=" in line:
+                    return line.split("=")[1].strip()
+        except:
+            pass
+        return f"Windows {platform.release()}"
+        
+    return system
+
+
+def get_device_name():
+    try:
+        result = subprocess.run(["getprop", "ro.product.model"], 
+                            capture_output=True, text=True, timeout=2)
+        model = result.stdout.strip()
+        if model:
+            return model
+    except:
+        pass
+    
+    try:
+        return platform.node()
+    except:
+        pass
+    
+    return "Unknown Device"
+
+
+def get_kernel():
+    try:
+        if hasattr(os, 'uname'):
+            return os.uname().release
+        return platform.release()
+    except:
+        return "Unknown"
+
+
+def get_uptime():
+    try:
+        if os.path.exists("/proc/uptime"):
+            with open("/proc/uptime") as f:
+                uptime_seconds = float(f.read().split()[0])
+                days = int(uptime_seconds // 86400)
+                hours = int((uptime_seconds % 86400) // 3600)
+                mins = int((uptime_seconds % 3600) // 60)
+                if days > 0:
+                    return f"{days} days, {hours} hours, {mins} mins"
+                elif hours > 0:
+                    return f"{hours} hours, {mins} mins"
+                else:
+                    return f"{mins} mins"
+    except:
+        pass
+    return "N/A"
+
+
+def get_shell():
+    try:
+        shell = os.environ.get("SHELL", "sh")
+        return os.path.basename(shell)
+    except:
+        return "sh"
+
+
+def get_ip():
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(2)
+        try:
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except:
+            s.close()
+            return "127.0.0.1"
+    except:
+        return "127.0.0.1"
+
+
+def get_wifi():
+    try:
+        result = subprocess.run(["iwgetid", "-r"], 
+                            capture_output=True, text=True, timeout=2)
+        ssid = result.stdout.strip()
+        if ssid:
+            return ssid
+    except:
+        pass
+    
+    try:
+        result = subprocess.run(["termux-wifi-connectioninfo"], 
+                            capture_output=True, text=True, timeout=2)
+        if result.returncode == 0:
+            import json
+            data = json.loads(result.stdout)
+            return data.get("ssid", "Unknown")
+    except:
+        pass
+    
+    return "Disconnected"
+
+
+def get_mem():
+    try:
+        if os.path.exists("/proc/meminfo"):
+            with open("/proc/meminfo") as f:
+                content = f.read()
+                total = 0
+                available = 0
+                for line in content.split("\n"):
+                    if line.startswith("MemTotal:"):
+                        total = int(line.split()[1])
+                    if line.startswith("MemAvailable:"):
+                        available = int(line.split()[1])
+                if total > 0:
+                    used = total - available
+                    return (used / total) * 100
+    except:
+        pass
+    return 0
+
+
+def get_disk_usage():
+    try:
+        stat = os.statvfs("/")
+        total = stat.f_blocks * stat.f_frsize
+        free = stat.f_bfree * stat.f_frsize
+        used = total - free
+        if total > 0:
+            return (used / total) * 100
+    except:
+        pass
+    return 0
+
+
+def draw_bar(percent, width=15):
+    filled = int((percent / 100) * width)
+    empty = width - filled
+    bar = "█" * filled + "░" * empty
+    return bar
+
+
+def strip_ansi(text):
+    import re
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
+
+
+def truncate_kernel(kernel, max_length=25):
+    if len(kernel) > max_length:
+        return kernel[:max_length-3] + "..."
+    return kernel
+
+def get_kernel_width():
+    try:
+        term_width = shutil.get_terminal_size().columns
+        available = term_width - 45
+        return max(15, available)
+    except:
+        return 25
+
+def truncate_kernel(kernel):
+    max_len = get_kernel_width()
+    if len(kernel) > max_len:
+        return kernel[:max_len-3] + "..."
+    return kernel
+
+
 def draw_neofetch():
-    os_name = get_os_info().split()[0] if get_os_info() else "ZyroXterm"
+    os_name = get_os_info()
     device = get_device_name()
+    kernel = truncate_kernel(get_kernel())
+    uptime = get_uptime()
     shell = get_shell()
     ip = get_ip()
     wifi = get_wifi()[:22]
@@ -304,13 +591,14 @@ def draw_neofetch():
     info_rows = [
         (f"{C_SKY}OS{RST}",       f"{C_WHITE}{os_name}{RST}"),
         (f"{C_SKY}Host{RST}",     f"{C_WHITE}{device}{RST}"),
+        (f"{C_SKY}Kernel{RST}",   f"{C_WHITE}{kernel}{RST}"),
+        (f"{C_SKY}Uptime{RST}",   f"{C_WHITE}{uptime}{RST}"),
         (f"{C_SKY}Shell{RST}",    f"{C_WHITE}{shell}{RST}"),
         (f"{C_SKY}Terminal{RST}", f"{C_WHITE}ZyroXterm{RST}"),
         (f"{C_SKY}Memory{RST}",   f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
         (f"{C_SKY}Disk{RST}",     f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
         (f"{C_SKY}Network{RST}",  f"{C_WHITE}{wifi}{RST}"),
         (f"{C_SKY}Local IP{RST}", f"{C_WHITE}{ip}{RST}"),
-        (f"{C_SKY}Kernel{RST}",   f"{C_WHITE}{os.uname().release if hasattr(os, 'uname') else 'Unknown'}{RST}"),
     ]
 
     print()
@@ -336,6 +624,16 @@ def draw_neofetch():
 
     print()
     draw_separator("─", C_DGRAY)
+
+
+def draw_separator(char, color):
+    import shutil
+    width = shutil.get_terminal_size().columns
+    print(f"{color}{char * width}{RST}")
+
+
+if __name__ == "__main__":
+    draw_neofetch()
 
 # ═══════════════════════════════════════════════════════════
 # DOUBLE LINE PS1 - USER REQUESTED STYLE
@@ -623,6 +921,12 @@ def main():
                 
             elif cmd.lower() == "cmatrix":
                 subprocess.Popen(f'{sys.executable} $HOME/ZyroXterm/theme/execute/cmatrix.py', shell=True)
+                
+            elif cmd.lower() == "cmatrix":
+                subprocess.Popen(f'{sys.executable} $HOME/.ZyroXterm/theme/execute/cmatrix.py', shell=True)
+            
+            elif cmd.lower() == "clear":
+                os.system("clear")
             
             elif cmd.lower() == "deb install":
                 os.system("chmod +x installer/debian.sh")

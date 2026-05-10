@@ -32,8 +32,7 @@ clear
 figlet_func
 
 pip install pyfiglet -y
-pip install setuptools
-pip install cython
+pip install platform
 
 echo ""
 

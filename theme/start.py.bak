@@ -280,8 +280,9 @@ def draw_banner():
     print(f"{C_PURPLE}╰{'━' * (w - 2)}╯{RST}")
     print()
 
+
 def draw_neofetch():
-    os_name = get_os_info().split()[0] if get_os_info() else "Termux"
+    os_name = get_os_info().split()[0] if get_os_info() else "ZyroXterm"
     device = get_device_name()
     shell = get_shell()
     ip = get_ip()
@@ -290,34 +291,48 @@ def draw_neofetch():
     disk = get_disk_usage()
 
     art = [
-        f"{C_PURPLE}    ▓▓▓▓▓▓    {RST}",
-        f"{C_MAGENTA}  ▓▓      ▓▓  {RST}",
-        f"{C_PINK} ▓▓  {C_WHITE}◆◆{C_PINK}    ▓▓ {RST}",
-        f"{C_ROSE}▓▓  {C_WHITE}◆◆◆◆{C_ROSE}    ▓▓{RST}",
-        f"{C_GOLD}▓▓  {C_WHITE}◆◆◆◆{C_GOLD}    ▓▓{RST}",
-        f"{C_TEAL} ▓▓  {C_WHITE}◆◆{C_TEAL}    ▓▓ {RST}",
-        f"{C_CYAN}  ▓▓      ▓▓  {RST}",
-        f"{C_SKY}    ▓▓▓▓▓▓    {RST}"
+        f"{C_PURPLE}       ▓▓▓▓▓▓       {RST}",
+        f"{C_MAGENTA}     ▓▓▓▓▓▓▓▓▓▓     {RST}",
+        f"{C_PINK}    ▓▓  {C_WHITE}◆◆{C_PINK}    ▓▓    {RST}",
+        f"{C_ROSE}   ▓▓  {C_WHITE}◆◆◆◆{C_ROSE}    ▓▓   {RST}",
+        f"{C_GOLD}   ▓▓  {C_WHITE}◆◆◆◆{C_GOLD}    ▓▓   {RST}",
+        f"{C_TEAL}    ▓▓  {C_WHITE}◆◆{C_TEAL}    ▓▓    {RST}",
+        f"{C_CYAN}     ▓▓▓▓▓▓▓▓▓▓     {RST}",
+        f"{C_SKY}       ▓▓▓▓▓▓       {RST}",
     ]
 
     info_rows = [
-        (f"{C_SKY}OS{RST}",     f"{C_WHITE}{os_name}{RST}"),
-        (f"{C_SKY}HOST{RST}",   f"{C_WHITE}{device}{RST}"),
-        (f"{C_SKY}SHELL{RST}",  f"{C_WHITE}{shell}{RST}"),
-        (f"{C_SKY}WIFI{RST}",   f"{C_WHITE}{wifi}{RST}"),
-        (f"{C_SKY}IP{RST}",     f"{C_WHITE}{ip}{RST}"),
-        (f"{C_SKY}MEM{RST}",    f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
-        (f"{C_SKY}DISK{RST}",   f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
+        (f"{C_SKY}OS{RST}",       f"{C_WHITE}{os_name}{RST}"),
+        (f"{C_SKY}Host{RST}",     f"{C_WHITE}{device}{RST}"),
+        (f"{C_SKY}Shell{RST}",    f"{C_WHITE}{shell}{RST}"),
+        (f"{C_SKY}Terminal{RST}", f"{C_WHITE}ZyroXterm{RST}"),
+        (f"{C_SKY}Memory{RST}",   f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
+        (f"{C_SKY}Disk{RST}",     f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
+        (f"{C_SKY}Network{RST}",  f"{C_WHITE}{wifi}{RST}"),
+        (f"{C_SKY}Local IP{RST}", f"{C_WHITE}{ip}{RST}"),
+        (f"{C_SKY}Kernel{RST}",   f"{C_WHITE}{os.uname().release if hasattr(os, 'uname') else 'Unknown'}{RST}"),
     ]
 
     print()
     max_label = max(len(strip_ansi(label)) for label, _ in info_rows)
+    total_lines = max(len(art), len(info_rows))
 
-    for i, (art_line, (label, value)) in enumerate(zip(art, info_rows)):
-        print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
+    for i in range(total_lines):
+        art_line = art[i] if i < len(art) else " " * len(strip_ansi(art[0]))
+        if i < len(info_rows):
+            label, value = info_rows[i]
+            print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
+        else:
+            print(f"{art_line}")
 
-    for j in range(len(info_rows), len(art)):
-        print(f"{art[j]}")
+    print()
+
+    colors = [C_BLACK, C_RED, C_GREEN, C_YELLOW, C_BLUE, C_MAGENTA, C_CYAN, C_WHITE]
+
+    print(" " * 20, end="")
+    for c in colors:
+        print(f"{c}██{RST}", end="")
+    print()
 
     print()
     draw_separator("─", C_DGRAY)
@@ -545,7 +560,7 @@ def print_about():
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ CREATOR{RST}")
     print(f"{C_PURPLE}│{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'NAME':<12}{RST} {C_DGRAY}→{RST} {C_PINK}{BOLD}Farel Alfareza{RST}")
-    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'ROLE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Cyber Security Architect{RST}")
+    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'ROLE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Developer{RST}")
     print(f"{C_PURPLE}│{RST}")
 
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ SOCIAL{RST}")
@@ -559,12 +574,12 @@ def print_about():
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ PROJECT{RST}")
     print(f"{C_PURPLE}│{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'NAME':<12}{RST} {C_DGRAY}→{RST} {C_CYAN}{BOLD}ZyroXterm{RST}")
-    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'TYPE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Termux Visual Theme{RST}")
+    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'TYPE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}ZyroXterm Visual{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'VERSION':<12}{RST} {C_DGRAY}→{RST} {C_CYAN}{system_version}{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'STATUS':<12}{RST} {C_DGRAY}→{RST} {C_GREEN}✓ Active{RST}")
 
     print(f"{C_PURPLE}┣{'━' * (w - 2)}┫{RST}")
-    print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] Style meets functionality - Termux reimagined{RST}")
+    print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] Style meets functionality reimagined{RST}")
     print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] 100% Safe | No system files modified{RST}")
     print(f"{C_PURPLE}╰{'━' * (w - 2)}╯{RST}")
     print()
@@ -594,14 +609,13 @@ def main():
 
             if cmd.lower() in ["exit", "quit"]:
                 print()
-                print(f"{C_PURPLE}╭{'━' * (tw() - 2)}╮{RST}")
                 goodbye = f"{BOLD}{C_CYAN}GOODBYE{RST}"
-                print(f"{C_PURPLE}│{RST} {center_text(goodbye).strip()} {C_PURPLE}│{RST}")
+                print(f"{C_PURPLE}{RST} {center_text(goodbye).strip()} {C_PURPLE}{RST}")
                 thanks = f"{C_MGRAY}Thanks for using ZyroXterm!{RST}"
-                print(f"{C_PURPLE}│{RST} {center_text(thanks).strip()} {C_PURPLE}│{RST}")
+                print(f"{C_PURPLE}{RST} {center_text(thanks).strip()} {C_PURPLE}{RST}")
                 print(f"{C_PURPLE}╰{'━' * (tw() - 2)}╯{RST}")
                 print()
-                os.system("(sleep 0.5; pkill -f com.termux) &")
+                os.system("pkill -9 -u $(whoami)")
                 break
             
             elif cmd.lower() == "help":
