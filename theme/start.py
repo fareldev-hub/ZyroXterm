@@ -929,9 +929,8 @@ def main():
             elif cmd.lower() == "reinstall":
                 home = os.path.expanduser("~")
                 os.chdir(home)
-                os.system("rm -rf .ZyroXterm")
-                os.system("mv ZyroXterm .ZyroXterm")
-                os.chdir(".ZyroXterm")
+                os.system("mv .ZyroXterm ZyroXterm ")
+                os.chdir("ZyroXterm")
                 os.system("chmod +x theme/startup.sh && bash theme/startup.sh")
                 
             elif cmd.lower() == "zyroXdebian":
@@ -941,7 +940,7 @@ def main():
                 os.system("bash $HOME/ubuntu.sh")
                 
             elif cmd.lower() == "zyroXarch":
-                os.system("bash $HOME/archlinux.sh")
+                os.system("bash $HOME/arch.sh")
                 
             elif cmd.lower() == "uninstall":
                 os.system("bash $HOME/.ZyroXterm/uninstall.sh")
