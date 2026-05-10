@@ -269,12 +269,12 @@ EOF
 chsh -s /usr/bin/zsh root 2>/dev/null || true
 " 2>/dev/null
         
-        cat > "$HOME/${SELECTED_DISTRO}.sh" << EOF
+        cat > "$HOME/.ZyroXterm/${SELECTED_DISTRO}.sh" << EOF
 #!/bin/bash
 # Script untuk akses $SELECTED_DISTRO dengan ZyroXterm
 proot-distro login $SELECTED_DISTRO -- bash -c "cd /data/data/com.termux/files/home && exec zsh"
 EOF
-        chmod +x "$HOME/${SELECTED_DISTRO}.sh"
+        chmod +x "$HOME/.ZyroXterm/${SELECTED_DISTRO}.sh"
         
         echo -e "${CHECK} Setup ZyroXterm di $SELECTED_DISTRO selesai!${RESET}"
         
@@ -282,7 +282,7 @@ EOF
         echo -e "${CYAN}┌────────────────────────────────────────┐${RESET}"
         echo -e "${CYAN}│${RESET}     ${GREEN}CARA AKSES $SELECTED_DISTRO${RESET}                 ${CYAN}│${RESET}"
         echo -e "${CYAN}└────────────────────────────────────────┘${RESET}"
-        echo -e "  ${ARROW} Ketik: ${GREEN}./${SELECTED_DISTRO}.sh${RESET}"
+        echo -e "  ${ARROW} Ketik: ${GREEN} zyr ${SELECTED_DISTRO}${RESET}"
         echo -e "  ${ARROW} Atau:  ${GREEN}proot-distro login $SELECTED_DISTRO${RESET}"
         echo ""
     else
@@ -301,7 +301,7 @@ alias myip='curl ifconfig.me'
 # Alias untuk akses Linux (jika ada)
 [ -f "$HOME/ubuntu.sh" ] && alias ubuntu='~/ubuntu.sh'
 [ -f "$HOME/debian.sh" ] && alias debian='~/debian.sh'
-[ -f "$HOME/arch.sh" ] && alias arch='~/arch.sh'
+[ -f "$HOME/archlinux.sh" ] && alias arch='~/archlinux.sh'
 
 # Welcome message
 echo -e "\033[96m┌────────────────────────────────────────┐\033[0m"

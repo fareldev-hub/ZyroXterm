@@ -554,7 +554,7 @@ def truncate_kernel(kernel, max_length=25):
 def get_kernel_width():
     try:
         term_width = shutil.get_terminal_size().columns
-        available = term_width - 45
+        available = term_width - 35
         return max(15, available)
     except:
         return 25
@@ -698,9 +698,9 @@ def print_help():
         ("exit",   "Exit terminal session"),
         ("clear",  "Clear screen & redraw"),
         ("help",   "Show this help menu"),
-        ("zxr debian",  "Run linux debian"),
-        ("zxr ubuntu",  "Run linux ubuntu"),
-        ("zxr arch",  "Run Arch linux"),
+        ("zyr debian",  "Run linux debian"),
+        ("zyr ubuntu",  "Run linux ubuntu"),
+        ("zyr arch",  "Run Arch linux"),
         ("reinstall",   "Reinstall ZyroXterm"),
         ("sys",    "System info with animation"),
         ("about",  "Author & project info"),
@@ -931,14 +931,14 @@ def main():
                 os.chdir("ZyroXterm")
                 os.system("chmod +x theme/startup.sh && bash theme/startup.sh")
                 
-            elif cmd.lower() == "zxr debian":
-                os.system("bash $HOME/debian.sh")
+            elif cmd.lower() == "zyr debian":
+                os.system("bash $HOME/.ZyroXterm/debian.sh")
                 
-            elif cmd.lower() == "zxr ubuntu":
-                os.system("bash $HOME/ubuntu.sh")
+            elif cmd.lower() == "zyr ubuntu":
+                os.system("bash $HOME/.ZyroXterm/ubuntu.sh")
                 
-            elif cmd.lower() == "zxr arch":
-                os.system("bash $HOME/archlinux.sh")
+            elif cmd.lower() == "zyr archlinux":
+                os.system("bash $HOME/.ZyroXterm/archlinux.sh")
                 
             elif cmd.lower() == "uninstall":
                 os.system("bash $HOME/.ZyroXterm/uninstall.sh")

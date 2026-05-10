@@ -16,7 +16,7 @@ pkg install sl -y
 pip install pyfiglet -y
 
 echo ""
-
+clear
 echo -e "${GRAY}"
 figlet ZyroXterm
 echo -e "${RESET}"
