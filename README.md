@@ -132,28 +132,15 @@ ls
 
 ## untuk debian
 ```bash
-chmod +x debian.sh
-./debian.sh 
+zyr debian
 ```
 ## untuk ubuntu
 ```bash
-chmod +x ubuntu.sh
-./ubuntu.sh 
+zyr ubuntu
 ```
 ## untuk arch linux
 ```bash
-chmod +x arch.sh
-./arxh.sh 
-```
-
-## Atau kamu bisa memanggilnya langsung
-pastikan linux yg di panggil terlah terinstall
-```bash
-deb install
-```
-atau
-```bash
-debian run
+zyr archlinux
 ```
 
 selengkapnya Ketik :
