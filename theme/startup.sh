@@ -80,7 +80,8 @@ figlet "ZyroXterm"
 echo -e "${RESET}"
 
 echo -e "${GRAY}Jadikan ZyroXterm Sebagai terminal default??${RESET}"
-echo -e "${YELLOW}Proses ini akan mengubah tampilan termux dan menetapkan ZyroXterm sebagai terminal default${RESET}"
+echo -e "${YELLOW}Proses ini akan mengubah tampilan termux
+dan menetapkan ZyroXterm sebagai terminal default${RESET}"
 echo ""
 
 read -p "$(echo -e ${BOLD}${CYAN}"➜  Mulai instalasi ZyroXterm? (y/n): "${RESET})" pilihan
@@ -122,7 +123,6 @@ if [ -f "$ZYROX_SOURCE/theme/start.py" ]; then
 fi
 
 if [ -d "$HOME/ZyroXterm" ] && [ ! -d "$HOME/.ZyroXterm" ]; then
-    echo -e "${INFO} Memindahkan ZyroXterm ke .ZyroXterm${RESET}"
     mv "$HOME/ZyroXterm" "$HOME/.ZyroXterm"
 elif [ -d "$HOME/ZyroXterm" ] && [ -d "$HOME/.ZyroXterm" ]; then
     echo -e "${YELLOW}${INFO} Folder .ZyroXterm sudah ada, menggabungkan...${RESET}"
@@ -188,6 +188,7 @@ if [ -n "$SELECTED_DISTRO" ]; then
         proot-distro login $SELECTED_DISTRO -- bash -c "
             apt update -y
             apt install -y zsh python3 python3-pip
+            apt install sudo
         "
         
         INSTALL_SUCCESS=true
@@ -216,6 +217,7 @@ if [ -n "$SELECTED_DISTRO" ]; then
         proot-distro login $SELECTED_DISTRO -- bash -c "
             apt update -y
             apt install -y zsh python3 python3-pip
+            apt install sudo
         " 
         
         echo -e "${INFO} Menginstall Python packages...${RESET}"

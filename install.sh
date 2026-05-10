@@ -1,46 +1,29 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 pkg install figlet
-clear
+
 
 GRAY='\033[0;37m'
 RESET='\033[0m'
 
-figlet_func() {
-    echo -e "${GRAY}"
-    figlet INSTALL
-    echo -e "${RESET}"
-    echo -e "${GRAY}Melakukan instalasi paket..${RESET}"
-}
+echo -e "${GRAY}install pack..${RESET}"
 
 pkg install figlet -y > /dev/null 2>&1
-
 pkg install python3 -y
-clear
-figlet_func
-
 pkg install zsh -y
-clear
-figlet_func
-
 pkg install cmatrix -y
-clear
-figlet_func
-
 pkg install sl -y
-clear
-figlet_func
-
 pip install pyfiglet -y
-pip install platform
 
 echo ""
-
-clear
 
 echo -e "${GRAY}"
 figlet ZyroXterm
 echo -e "${RESET}"
+echo ""
+chmod +x theme/installer/neofetch.sh
+./theme/installer/neofetch.sh
+echo ""
 echo -e "${YELLOW}Penginstalan Selesai √${RESET}"
 echo ""
 echo ""
