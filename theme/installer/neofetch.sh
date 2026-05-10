@@ -23,7 +23,7 @@ RST='\033[0m'
 # Author info
 echo ""
 echo -e "${C_CYAN}╔════════════════════════════════════════╗${RST}"
-echo -e "${C_CYAN}║${RST} ${C_GREEN}ZyroXterm Neofetch Config Installer${RST} ${C_CYAN}║${RST}"
+echo -e "${C_CYAN}║${RST} ${C_GREEN}ZyroXterm Config Installer${RST} ${C_CYAN}║${RST}"
 echo -e "${C_CYAN}╠════════════════════════════════════════╣${RST}"
 echo -e "${C_CYAN}║${RST} ${C_YELLOW}Author :${RST} Farel Alfareza"
 echo -e "${C_CYAN}║${RST} ${C_YELLOW}GitHub :${RST} ${C_BLUE}fareldev-hub${RST}"
