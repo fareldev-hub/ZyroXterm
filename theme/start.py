@@ -917,8 +917,6 @@ def main():
             elif cmd.lower() == "help":
                 print_help()
                 
-            elif cmd.lower() == "cmatrix":
-                subprocess.Popen(f'{sys.executable} $HOME/ZyroXterm/theme/execute/cmatrix.py', shell=True)
                 
             elif cmd.lower() == "cmatrix":
                 subprocess.Popen(f'{sys.executable} $HOME/.ZyroXterm/theme/execute/cmatrix.py', shell=True)
