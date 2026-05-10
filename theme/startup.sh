@@ -327,7 +327,7 @@ echo ""
 
 if [ "$INSTALL_SUCCESS" = true ]; then
     echo -e "${CYAN}• AKSES LINUX:${RESET}"
-    echo -e "  ${GREEN}[+]${RESET} Ketik: ${YELLOW}./${SELECTED_DISTRO}.sh${RESET}"
+    echo -e "  ${GREEN}[+]${RESET} Ketik: ${YELLOW}zyr ${SELECTED_DISTRO}${RESET}"
     echo -e "  ${GREEN}[+]${RESET} Atau:  ${YELLOW}proot-distro login $SELECTED_DISTRO${RESET}"
     echo ""
 fi
