@@ -272,8 +272,7 @@ chsh -s /usr/bin/zsh root 2>/dev/null || true
         cat > "$HOME/${SELECTED_DISTRO}.sh" << EOF
 #!/bin/bash
 # Script untuk akses $SELECTED_DISTRO dengan ZyroXterm
-proot-distro login $SELECTED_DISTRO -- bash -c "cd /data/data/com.termux/files/home"
-"zsh"
+proot-distro login $SELECTED_DISTRO -- bash -c "cd /data/data/com.termux/files/home && exec zsh"
 EOF
         chmod +x "$HOME/${SELECTED_DISTRO}.sh"
         
