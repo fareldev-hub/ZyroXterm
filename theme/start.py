@@ -291,46 +291,48 @@ def draw_neofetch():
     disk = get_disk_usage()
 
     art = [
-        f"{C_PURPLE}    ▓▓▓▓▓▓    {RST}",
-        f"{C_MAGENTA}  ▓▓      ▓▓  {RST}",
-        f"{C_PINK} ▓▓  {C_WHITE}◆◆{C_PINK}    ▓▓ {RST}",
-        f"{C_ROSE}▓▓  {C_WHITE}◆◆◆◆{C_ROSE}    ▓▓{RST}",
-        f"{C_GOLD}▓▓  {C_WHITE}◆◆◆◆{C_GOLD}    ▓▓{RST}",
-        f"{C_TEAL} ▓▓  {C_WHITE}◆◆{C_TEAL}    ▓▓ {RST}",
-        f"{C_CYAN}  ▓▓      ▓▓  {RST}",
-        f"{C_SKY}    ▓▓▓▓▓▓    {RST}"
+        f"{C_PURPLE}       ▓▓▓▓▓▓       {RST}",
+        f"{C_MAGENTA}     ▓▓▓▓▓▓▓▓▓▓     {RST}",
+        f"{C_PINK}    ▓▓  {C_WHITE}◆◆{C_PINK}    ▓▓    {RST}",
+        f"{C_ROSE}   ▓▓  {C_WHITE}◆◆◆◆{C_ROSE}    ▓▓   {RST}",
+        f"{C_GOLD}   ▓▓  {C_WHITE}◆◆◆◆{C_GOLD}    ▓▓   {RST}",
+        f"{C_TEAL}    ▓▓  {C_WHITE}◆◆{C_TEAL}    ▓▓    {RST}",
+        f"{C_CYAN}     ▓▓▓▓▓▓▓▓▓▓     {RST}",
+        f"{C_SKY}       ▓▓▓▓▓▓       {RST}",
     ]
 
     info_rows = [
-        (f"{C_SKY}OS{RST}",     f"{C_WHITE}{os_name}{RST}"),
-        (f"{C_SKY}HOST{RST}",   f"{C_WHITE}{device}{RST}"),
-        (f"{C_SKY}SHELL{RST}",  f"{C_WHITE}{shell}{RST}"),
-        (f"{C_SKY}WIFI{RST}",   f"{C_WHITE}{wifi}{RST}"),
-        (f"{C_SKY}IP{RST}",     f"{C_WHITE}{ip}{RST}"),
-        (f"{C_SKY}MEM{RST}",    f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
-        (f"{C_SKY}DISK{RST}",   f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
+        (f"{C_SKY}OS{RST}",       f"{C_WHITE}{os_name}{RST}"),
+        (f"{C_SKY}Host{RST}",     f"{C_WHITE}{device}{RST}"),
+        (f"{C_SKY}Shell{RST}",    f"{C_WHITE}{shell}{RST}"),
+        (f"{C_SKY}Terminal{RST}", f"{C_WHITE}ZyroXterm{RST}"),
+        (f"{C_SKY}Memory{RST}",   f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
+        (f"{C_SKY}Disk{RST}",     f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
+        (f"{C_SKY}Network{RST}",  f"{C_WHITE}{wifi}{RST}"),
+        (f"{C_SKY}Local IP{RST}", f"{C_WHITE}{ip}{RST}"),
+        (f"{C_SKY}Kernel{RST}",   f"{C_WHITE}{os.uname().release if hasattr(os, 'uname') else 'Unknown'}{RST}"),
     ]
 
     print()
     max_label = max(len(strip_ansi(label)) for label, _ in info_rows)
+    total_lines = max(len(art), len(info_rows))
 
-    for i, (art_line, (label, value)) in enumerate(zip(art, info_rows)):
-        print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
-
-    for j in range(len(info_rows), len(art)):
-        print(f"{art[j]}")
+    for i in range(total_lines):
+        art_line = art[i] if i < len(art) else " " * len(strip_ansi(art[0]))
+        if i < len(info_rows):
+            label, value = info_rows[i]
+            print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
+        else:
+            print(f"{art_line}")
 
     print()
-    draw_separator("─", C_DGRAY)
 
+    colors = [C_BLACK, C_RED, C_GREEN, C_YELLOW, C_BLUE, C_MAGENTA, C_CYAN, C_WHITE]
+
+    print(" " * 20, end="")
+    for c in colors:
+        print(f"{c}██{RST}", end="")
     print()
-    max_label = max(len(strip_ansi(label)) for label, _ in info_rows)
-
-    for i, (art_line, (label, value)) in enumerate(zip(art, info_rows)):
-        print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
-
-    for j in range(len(info_rows), len(art)):
-        print(f"{art[j]}")
 
     print()
     draw_separator("─", C_DGRAY)
