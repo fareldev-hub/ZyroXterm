@@ -695,15 +695,13 @@ def print_help():
     cmds = get_available_commands()
 
     internal_cmds = [
-        ("deb install",   "linux debian install"),
-        ("bun install",   "linux ubuntu install"),
-        ("arch install",   "linux arch install"),
-        ("debian run",   "start linux debian"),
-        ("ubuntu run",   "start linux ubuntu"),
-        ("arch run",   "start linux arch"),
         ("exit",   "Exit terminal session"),
         ("clear",  "Clear screen & redraw"),
         ("help",   "Show this help menu"),
+        ("zyroXdebian",  "Run linux debian"),
+        ("zyroXubuntu",  "Run linux ubuntu"),
+        ("zyroXarch",  "Run Arch linux"),
+        ("reinstall",   "Reinstall ZyroXterm"),
         ("sys",    "System info with animation"),
         ("about",  "Author & project info"),
         ("restart", "Restart shell"),
@@ -928,25 +926,21 @@ def main():
             elif cmd.lower() == "clear":
                 os.system("clear")
             
-            elif cmd.lower() == "deb install":
-                os.system("chmod +x installer/debian.sh")
-                os.system("bash $HOME/.ZyroXterm/theme/installer/debian.sh")
+            elif cmd.lower() == "reinstall":
+                home = os.path.expanduser("~")
+                os.chdir(home)
+                os.system("rm -rf .ZyroXterm")
+                os.system("mv ZyroXterm .ZyroXterm")
+                os.chdir(".ZyroXterm")
+                os.system("chmod +x theme/startup.sh && bash theme/startup.sh")
                 
-            elif cmd.lower() == "bun install":
-                os.system("chmod +x installer/ubuntu.sh")
-                os.system("bash $HOME/.ZyroXterm/theme/installer/ubuntu.sh")
-                
-            elif cmd.lower() == "arch install":
-                os.system("chmod +x installer/arch.sh")
-                os.system("bash $HOME/.ZyroXterm/theme/installer/arch.sh")
-                
-            elif cmd.lower() == "debian run":
+            elif cmd.lower() == "zyroXdebian":
                 os.system("bash $HOME/debian.sh")
                 
-            elif cmd.lower() == "ubuntu run":
+            elif cmd.lower() == "zyroXubuntu":
                 os.system("bash $HOME/ubuntu.sh")
                 
-            elif cmd.lower() == "arch run":
+            elif cmd.lower() == "zyroXarch":
                 os.system("bash $HOME/arch.sh")
                 
             elif cmd.lower() == "uninstall":
