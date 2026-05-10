@@ -957,6 +957,7 @@ def main():
                 draw_neofetch()
 
             elif cmd.lower() in ["sys", "system info", "info"]:
+                draw_neofetch()
                 print_system_info()
 
             elif cmd.lower() == "about":
