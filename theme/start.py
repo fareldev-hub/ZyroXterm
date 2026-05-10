@@ -280,12 +280,14 @@ def draw_banner():
     print(f"{C_PURPLE}╰{'━' * (w - 2)}╯{RST}")
     print()
 
+
 def draw_neofetch():
-    os_name = get_os_info().split()[0] if get_os_info() else "Termux"
+    user = os.getlogin() if hasattr(os, 'getlogin') else "u0_aXXX"
+    os_name = get_os_info().split()[0] if get_os_info() else "ZyroXterm"
     device = get_device_name()
     shell = get_shell()
     ip = get_ip()
-    wifi = get_wifi()[:22]
+    wifi = (get_wifi()[:22]) if get_wifi() else "Disconnected"
     mem = get_mem()
     disk = get_disk_usage()
 
@@ -300,27 +302,38 @@ def draw_neofetch():
         f"{C_SKY}    ▓▓▓▓▓▓    {RST}"
     ]
 
-    info_rows = [
-        (f"{C_SKY}OS{RST}",     f"{C_WHITE}{os_name}{RST}"),
-        (f"{C_SKY}HOST{RST}",   f"{C_WHITE}{device}{RST}"),
-        (f"{C_SKY}SHELL{RST}",  f"{C_WHITE}{shell}{RST}"),
-        (f"{C_SKY}WIFI{RST}",   f"{C_WHITE}{wifi}{RST}"),
-        (f"{C_SKY}IP{RST}",     f"{C_WHITE}{ip}{RST}"),
-        (f"{C_SKY}MEM{RST}",    f"{C_WHITE}{int(mem)}% {draw_bar(mem, 15)}{RST}"),
-        (f"{C_SKY}DISK{RST}",   f"{C_WHITE}{int(disk)}% {draw_bar(disk, 15)}{RST}"),
+    info_data = [
+        (f"{C_SKY}{user}{RST}@{C_SKY}{device}{RST}", "TITLE"),
+        (f"{C_WHITE}--------------{RST}", "SEP"),
+        ("OS", os_name),
+        ("Host", device),
+        ("Shell", shell),
+        ("WiFi", wifi),
+        ("IP", ip),
+        ("Memory", f"{int(mem)}% {draw_bar(mem, 10)}"),
+        ("Disk", f"{int(disk)}% {draw_bar(disk, 10)}"),
     ]
 
     print()
-    max_label = max(len(strip_ansi(label)) for label, _ in info_rows)
 
-    for i, (art_line, (label, value)) in enumerate(zip(art, info_rows)):
-        print(f"{art_line}  {C_DGRAY}│{RST} {label:<{max_label + 2}} {C_DGRAY}→{RST} {value}")
+    max_lines = max(len(art), len(info_data))
 
-    for j in range(len(info_rows), len(art)):
-        print(f"{art[j]}")
+    for i in range(max_lines):
+        left_side = art[i] if i < len(art) else " " * 14
+        
+        if i < len(info_data):
+            label, value = info_data[i]
+            
+            if value == "TITLE":
+                print(f"{left_side}   {label}")
+            elif value == "SEP":
+                print(f"{left_side}   {label}")
+            else:
+                print(f"{left_side}   {C_SKY}{label}{RST}: {C_WHITE}{value}{RST}")
+        else:
+            print(f"{left_side}")
 
     print()
-    draw_separator("─", C_DGRAY)
 
 # ═══════════════════════════════════════════════════════════
 # DOUBLE LINE PS1 - USER REQUESTED STYLE
@@ -545,7 +558,7 @@ def print_about():
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ CREATOR{RST}")
     print(f"{C_PURPLE}│{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'NAME':<12}{RST} {C_DGRAY}→{RST} {C_PINK}{BOLD}Farel Alfareza{RST}")
-    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'ROLE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Cyber Security Architect{RST}")
+    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'ROLE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Developer{RST}")
     print(f"{C_PURPLE}│{RST}")
 
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ SOCIAL{RST}")
@@ -559,12 +572,12 @@ def print_about():
     print(f"{C_PURPLE}│{RST} {BOLD}{C_CYAN}◆ PROJECT{RST}")
     print(f"{C_PURPLE}│{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'NAME':<12}{RST} {C_DGRAY}→{RST} {C_CYAN}{BOLD}ZyroXterm{RST}")
-    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'TYPE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}Termux Visual Theme{RST}")
+    print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'TYPE':<12}{RST} {C_DGRAY}→{RST} {C_WHITE}ZyroXterm Visual{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'VERSION':<12}{RST} {C_DGRAY}→{RST} {C_CYAN}{system_version}{RST}")
     print(f"{C_PURPLE}│{RST}   {C_DGRAY}├─{RST} {C_SKY}{'STATUS':<12}{RST} {C_DGRAY}→{RST} {C_GREEN}✓ Active{RST}")
 
     print(f"{C_PURPLE}┣{'━' * (w - 2)}┫{RST}")
-    print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] Style meets functionality - Termux reimagined{RST}")
+    print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] Style meets functionality reimagined{RST}")
     print(f"{C_PURPLE}│{RST} {C_MGRAY}[i] 100% Safe | No system files modified{RST}")
     print(f"{C_PURPLE}╰{'━' * (w - 2)}╯{RST}")
     print()
@@ -594,11 +607,10 @@ def main():
 
             if cmd.lower() in ["exit", "quit"]:
                 print()
-                print(f"{C_PURPLE}╭{'━' * (tw() - 2)}╮{RST}")
                 goodbye = f"{BOLD}{C_CYAN}GOODBYE{RST}"
-                print(f"{C_PURPLE}│{RST} {center_text(goodbye).strip()} {C_PURPLE}│{RST}")
+                print(f"{C_PURPLE}{RST} {center_text(goodbye).strip()} {C_PURPLE}{RST}")
                 thanks = f"{C_MGRAY}Thanks for using ZyroXterm!{RST}"
-                print(f"{C_PURPLE}│{RST} {center_text(thanks).strip()} {C_PURPLE}│{RST}")
+                print(f"{C_PURPLE}{RST} {center_text(thanks).strip()} {C_PURPLE}{RST}")
                 print(f"{C_PURPLE}╰{'━' * (tw() - 2)}╯{RST}")
                 print()
                 os.system("pkill -9 -u $(whoami)")
