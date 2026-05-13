@@ -95,7 +95,7 @@ Jika selesai, akan muncul tampilan seperti gambar berikut:
 
 ---
 
-### ✅ Tahap 23- Pilih Linux
+### ✅ Tahap 3 - Pilih Linux
 
 Jika selesai, akan muncul tampilan seperti gambar berikut:
 
